@@ -89,28 +89,26 @@ class ProxyConnection(asyncio.Protocol):
         decoded = data.decode(errors='ignore')
         self.response_buffer += decoded
 
-        if self.response_buffer.endswith("}"):
-            try:
-                _LOGGER.debug("[C] %s", self.response_buffer.strip())
-                parsed = json.loads(self.response_buffer)
+        try:
+            parsed = json.loads(self.response_buffer)
+            _LOGGER.debug("[C] %s", self.response_buffer.strip())
 
-                boiler_temp = self.proxy.get_command_from_state(CMD_TEMP_ENTITY, 6500)
-                boiler_power = self.proxy.get_command_from_state(CMD_POWER_ENTITY, 67)
+            boiler_temp = self.proxy.get_command_from_state(CMD_TEMP_ENTITY, 6500)
+            boiler_power = self.proxy.get_command_from_state(CMD_POWER_ENTITY, 67)
 
-                if parsed.get("BoilerTempCmd") != boiler_temp:
-                    self.proxy.last_temp = boiler_temp
-                    self.send_command("BoilerTempCmd", boiler_temp)
+            if parsed.get("BoilerTempCmd") != boiler_temp:
+                self.proxy.last_temp = boiler_temp
+                self.send_command("BoilerTempCmd", boiler_temp)
 
-                if parsed.get("BoilerPowerCmd") != boiler_power:
-                    self.proxy.last_power = boiler_power
-                    self.send_command("BoilerPowerCmd", boiler_power)
+            if parsed.get("BoilerPowerCmd") != boiler_power:
+                self.proxy.last_power = boiler_power
+                self.send_command("BoilerPowerCmd", boiler_power)
 
-                async_dispatcher_send(self.proxy._hass, SIGNAL_UPDATE)
+            async_dispatcher_send(self.proxy._hass, SIGNAL_UPDATE)
+            self.response_buffer = ""
 
-            except json.JSONDecodeError as e:
-                _LOGGER.warning("[C] Invalid JSON: %s", e)
-            finally:
-                self.response_buffer = ""
+        except json.JSONDecodeError:
+            _LOGGER.debug("[C] Waiting for full JSON chunk")
 
         if self.remote_writer:
             self.remote_writer.write(data)
