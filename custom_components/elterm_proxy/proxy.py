@@ -50,22 +50,35 @@ class ProxyConnection(asyncio.Protocol):
         self.proxy = proxy
         self.transport = None
         self.remote_writer: Optional[asyncio.StreamWriter] = None
+        self._forward_remote_task = None
+        self._remote_connected = asyncio.Event()
         self.response_buffer = ""
 
     def connection_made(self, transport):
         self.transport = transport
-        asyncio.create_task(self.setup_remote())
+        asyncio.create_task(self.start_forward_loop())
 
-    async def setup_remote(self):
-        try:
-            reader, writer = await asyncio.open_connection(
-                self.proxy._config.get("forward_host"),
-                self.proxy._config.get("forward_port")
-            )
-            self.remote_writer = writer
-            asyncio.create_task(self.forward_remote(reader))
-        except Exception as e:
-            _LOGGER.error("Failed to connect to forward host: %s", e)
+    def connection_lost(self, exc):
+        _LOGGER.info("Client disconnected")
+        if self._forward_remote_task:
+            self._forward_remote_task.cancel()
+
+    async def start_forward_loop(self):
+        while True:
+            try:
+                reader, writer = await asyncio.open_connection(
+                    self.proxy._config.get("forward_host"),
+                    self.proxy._config.get("forward_port")
+                )
+                self.remote_writer = writer
+                self._remote_connected.set()
+                _LOGGER.info("Connected to forward host")
+                self._forward_remote_task = asyncio.create_task(self.forward_remote(reader))
+                await self._forward_remote_task
+            except Exception as e:
+                _LOGGER.warning("Forward connection failed or lost: %s", e)
+                self._remote_connected.clear()
+                await asyncio.sleep(10)
 
     async def forward_remote(self, reader):
         try:
@@ -110,8 +123,10 @@ class ProxyConnection(asyncio.Protocol):
         except json.JSONDecodeError:
             _LOGGER.debug("[C] Waiting for full JSON chunk")
 
-        if self.remote_writer:
+        if self._remote_connected.is_set():
             self.remote_writer.write(data)
+        else:
+            _LOGGER.warning("Skipping forward: remote not connected")
 
     def send_command(self, field, value):
         reply = {
