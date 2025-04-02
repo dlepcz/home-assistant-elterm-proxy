@@ -8,9 +8,9 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass, config_entry, async_add_entities):
     proxy = hass.data[DOMAIN][config_entry.entry_id]
     sensors = [
-        EltermProxySensor(proxy, "boiler_temp", "Boiler Temperature", "°C"),
-        EltermProxySensor(proxy, "boiler_power", "Boiler Power", "%"),
-        EltermProxySensor(proxy, "boiler_token", "Boiler Token", None)
+        EltermProxySensor(proxy, "elterm_boiler_temp", "Elterm Boiler Temperature", "°C"),
+        EltermProxySensor(proxy, "elterm_boiler_power", "Elterm Boiler Power", "%"),
+        EltermProxySensor(proxy, "elterm_boiler_token", "Elterm Boiler Token", None)
     ]
     async_add_entities(sensors)
 
@@ -47,9 +47,9 @@ class EltermProxySensor(SensorEntity):
         return f"{DOMAIN}_{self._key}"
 
     def update_state(self):
-        if self._key == "boiler_temp":
+        if self._key == "elterm_boiler_temp":
             self._state = self._proxy.last_temp
-        elif self._key == "boiler_power":
+        elif self._key == "elterm_boiler_power":
             self._state = self._proxy.last_power
-        elif self._key == "boiler_token":
+        elif self._key == "elterm_boiler_token":
             self._state = self._proxy.token

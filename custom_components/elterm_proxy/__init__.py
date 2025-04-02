@@ -19,13 +19,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = proxy
 
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(entry, "sensor")
-    )
+    await hass.config_entries.async_forward_entry_setups(entry, ["sensor"])
 
     return True
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     proxy: EltermProxy = hass.data[DOMAIN].pop(entry.entry_id)
     await proxy.stop()
+
     return await hass.config_entries.async_forward_entry_unload(entry, "sensor")
