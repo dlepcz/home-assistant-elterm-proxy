@@ -52,16 +52,25 @@ class ProxyConnection(asyncio.Protocol):
         self.remote_writer: Optional[asyncio.StreamWriter] = None
         self._forward_remote_task = None
         self._remote_connected = asyncio.Event()
+        self._forward_loop_task = None
         self.response_buffer = ""
 
     def connection_made(self, transport):
         self.transport = transport
-        asyncio.create_task(self.start_forward_loop())
+        self._forward_loop_task = asyncio.create_task(self.start_forward_loop())
 
     def connection_lost(self, exc):
         _LOGGER.info("Client disconnected")
         if self._forward_remote_task:
             self._forward_remote_task.cancel()
+        if self.remote_writer:
+            try:
+                self.remote_writer.close()
+                asyncio.create_task(self.remote_writer.wait_closed())
+            except Exception:
+                pass
+        if self._forward_loop_task:
+            self._forward_loop_task.cancel()
 
     async def start_forward_loop(self):
         while True:
@@ -75,6 +84,8 @@ class ProxyConnection(asyncio.Protocol):
                 _LOGGER.info("Connected to forward host")
                 self._forward_remote_task = asyncio.create_task(self.forward_remote(reader))
                 await self._forward_remote_task
+            except asyncio.CancelledError:
+                break
             except Exception as e:
                 _LOGGER.warning("Forward connection failed or lost: %s", e)
                 self._remote_connected.clear()
@@ -103,8 +114,8 @@ class ProxyConnection(asyncio.Protocol):
         self.response_buffer += decoded
 
         try:
-            parsed = json.loads(self.response_buffer)
             _LOGGER.debug("[C] %s", self.response_buffer.strip())
+            parsed = json.loads(self.response_buffer)
 
             boiler_temp = self.proxy.get_command_from_state(CMD_TEMP_ENTITY, 6500)
             boiler_power = self.proxy.get_command_from_state(CMD_POWER_ENTITY, 67)
