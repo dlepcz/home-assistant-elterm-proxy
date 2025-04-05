@@ -21,6 +21,7 @@ class EltermProxy:
         self.dev_pin = config.get("dev_pin")
         self.last_temp = None
         self.last_power = None
+        self.BoilerTempAct = None
 
     async def start(self):
         loop = asyncio.get_running_loop()
@@ -116,9 +117,11 @@ class ProxyConnection(asyncio.Protocol):
         try:
             _LOGGER.debug("[C] %s", self.response_buffer.strip())
             parsed = json.loads(self.response_buffer)
+            self.response_buffer = ""
 
-            boiler_temp = self.proxy.get_command_from_state(CMD_TEMP_ENTITY, 6500)
-            boiler_power = self.proxy.get_command_from_state(CMD_POWER_ENTITY, 67)
+            self.proxy.BoilerTempAct = parsed.get("BoilerTempAct")
+            boiler_temp = self.proxy.get_command_from_state(CMD_TEMP_ENTITY, 65) * 100
+            boiler_power = self.proxy.get_command_from_state(CMD_POWER_ENTITY, 2)
 
             if parsed.get("BoilerTempCmd") != boiler_temp:
                 self.proxy.last_temp = boiler_temp
@@ -129,7 +132,6 @@ class ProxyConnection(asyncio.Protocol):
                 self.send_command()
 
             async_dispatcher_send(self.proxy._hass, SIGNAL_UPDATE)
-            self.response_buffer = ""
 
         except json.JSONDecodeError:
             _LOGGER.debug("[C] Waiting for full JSON chunk")

@@ -9,6 +9,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     proxy = hass.data[DOMAIN][config_entry.entry_id]
     sensors = [
         EltermProxySensor(proxy, "elterm_boiler_temp", "Elterm Boiler Temperature", "°C"),
+        EltermProxySensor(proxy, "elterm_boiler_current_temp", "Elterm Boiler Current Temperature", "°C"),
         EltermProxySensor(proxy, "elterm_boiler_power", "Elterm Boiler Power", "%"),
         EltermProxySensor(proxy, "elterm_boiler_token", "Elterm Boiler Token", None)
     ]
@@ -48,8 +49,15 @@ class EltermProxySensor(SensorEntity):
 
     def update_state(self):
         if self._key == "elterm_boiler_temp":
-            self._state = self._proxy.last_temp
+            self._state = self._proxy.last_temp / 100
         elif self._key == "elterm_boiler_power":
-            self._state = self._proxy.last_power
+            if self._proxy.last_power == 1:
+                self._state = 33
+            elif self._proxy.last_power == 2:
+                self._state = 67
+            else:
+                self._state = 100         
         elif self._key == "elterm_boiler_token":
             self._state = self._proxy.token
+        elif self._key == "elterm_boiler_current_temp":
+            self._state = self._proxy.BoilerTempAct / 100
