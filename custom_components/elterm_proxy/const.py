@@ -5,5 +5,5 @@ DEFAULT_FORWARD_PORT = 88
 DEFAULT_DEV_ID = "XXXX"
 DEFAULT_DEV_PIN = "XXXX"
 SIGNAL_UPDATE = f"{DOMAIN}_update"
-CMD_TEMP_ENTITY = "sensor.boiler_temp_cmd"
-CMD_POWER_ENTITY = "sensor.boiler_power_cmd"
+CMD_TEMP_ENTITY = "input_number.elterm_set_temp_cmd"
+CMD_POWER_ENTITY = "input_number.elterm_set_power_cmd"
