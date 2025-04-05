@@ -50,15 +50,15 @@ class EltermProxySensor(SensorEntity):
     def update_state(self):
         _LOGGER.debug("Update sensor %s", self._key)
         if self._key == "elterm_boiler_temp":
-            self._state = self._proxy.last_temp / 100
+            self._state = str(int(self._proxy.last_temp) / 100)
         elif self._key == "elterm_boiler_power":
-            if self._proxy.last_power == 1:
-                self._state = 33
-            elif self._proxy.last_power == 2:
-                self._state = 67
+            if self._proxy.last_power == "1":
+                self._state = "33"
+            elif self._proxy.last_power == "2":
+                self._state = "67"
             else:
-                self._state = 100         
+                self._state = "100"        
         elif self._key == "elterm_boiler_token":
             self._state = self._proxy.token
         elif self._key == "elterm_boiler_current_temp":
-            self._state = self._proxy.BoilerTempAct / 100
+            self._state = str(int(self._proxy.BoilerTempAct) / 100)

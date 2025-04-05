@@ -114,8 +114,8 @@ class ProxyConnection(asyncio.Protocol):
         decoded = data.decode(errors='ignore')
         self.response_buffer += decoded
 
-        try:
-            if self.response_buffer[-1] == "}":
+        if self.response_buffer[-1] == "}":
+            try:
                 _LOGGER.debug("-------------------------")
                 _LOGGER.debug("[C] %s", self.response_buffer.strip())
                 _LOGGER.debug("-------------------------")
@@ -139,9 +139,8 @@ class ProxyConnection(asyncio.Protocol):
 
                 async_dispatcher_send(self.proxy._hass, SIGNAL_UPDATE)
 
-        except json.JSONDecodeError:
-            _LOGGER.debug("[C] Waiting for full JSON chunk")
-            if len(self.response_buffer) > 1600:
+            except json.JSONDecodeError:
+                _LOGGER.debug("[C] Waiting for full JSON chunk")
                 self.response_buffer = ""
 
         if self._remote_connected.is_set():
