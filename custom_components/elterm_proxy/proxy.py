@@ -17,12 +17,68 @@ class EltermProxy:
         self._config = config
         self._server = None
         self._tasks = []
-        self.token = "XXXXXX"
+        self.serverToken = "XXXXXX"
         self.dev_id = config.get("dev_id")
         self.dev_pin = config.get("dev_pin")
-        self.last_temp = None
-        self.last_power = None
-        self.BoilerTempAct = None
+        self.devId = None
+        self.devPin = None
+        self.token = None
+        self.frameType = None
+        self.timeStamp = None
+        self.devStatus = None
+        self.alarms = None
+        self.boilerTempAct = None
+        self.boilerTempCmd = None
+        self.boilerHist = None
+        self.dHWTempAct = None
+        self.dHWTempCmd = None
+        self.dHWOverH = None
+        self.dHWHist = None
+        self.dHWMode = None
+        self.cH1RoomTempAct = None
+        self.cH1RoomTempCom = None
+        self.cH1RoomTempCmd = None
+        self.cH1RoomHist = None
+        self.cH1Mode = None
+        self.weaTempAct = None
+        self.weaCorr = None
+        self.upTime = None
+        self.buModulMax = None
+        self.p001 = None
+        self.p002 = None
+        self.p003 = None
+        self.p004 = None
+        self.p005 = None
+        self.p006 = None
+        self.p007 = None
+        self.p008 = None
+        self.p009 = None
+        self.p011 = None
+        self.p012 = None
+        self.p013 = None
+        self.p014 = None
+        self.p015 = None
+        self.p016 = None
+        self.p017 = None
+        self.p018 = None
+        self.p019 = None
+        self.p021 = None
+        self.p022 = None
+        self.p023 = None
+        self.p024 = None
+        self.p025 = None
+        self.p026 = None
+        self.p027 = None
+        self.p028 = None
+        self.p029 = None
+        self.p030 = None
+        self.p031 = None
+        self.p032 = None
+        self.p033 = None
+        self.p034 = None
+        self.p035 = None
+        self.p036 = None
+        self.devType = None
 
     async def start(self):
         loop = asyncio.get_running_loop()
@@ -104,7 +160,8 @@ class ProxyConnection(asyncio.Protocol):
                 try:
                     json_data = json.loads(decoded)
                     if 'Token' in json_data:
-                        self.proxy.token = json_data['Token']
+                        if self.update(serverToken = json_data['Token']):
+                             async_dispatcher_send(self.proxy._hass, SIGNAL_UPDATE)
                 except json.JSONDecodeError:
                     _LOGGER.debug("[S] Non-JSON data")
                 self.transport.write(data)
@@ -123,24 +180,73 @@ class ProxyConnection(asyncio.Protocol):
                 _LOGGER.debug("-------------------------")
                 self.response_buffer = ""
                 parsed = json.loads(match.group(0))
-
-                boilerTempAct = parsed.get("BoilerTempAct")
-                boilerTempCmd = parsed.get("BoilerTempCmd")
-                bBuModulMax = parsed.get("BuModulMax")
+          
                 boiler_temp = str(self.proxy.get_command_from_state(CMD_TEMP_ENTITY, 65) * 100)
                 boiler_power = str(self.proxy.get_command_from_state(CMD_POWER_ENTITY, 1))
 
-                if boilerTempCmd != boiler_temp or bBuModulMax != boiler_power:
-                    self.proxy.last_temp = boiler_temp
-                    self.proxy.last_power = boiler_power
-                    self.send_command()
-
-                if boilerTempCmd != self.proxy.last_temp or self.proxy.BoilerTempAct != boilerTempAct or self.proxy.last_power != bBuModulMax:
-                    self.proxy.last_temp = boiler_temp
-                    self.proxy.last_power = boiler_power
-                    self.proxy.BoilerTempAct = boilerTempAct
+                if self.update(devId=parsed.get("DevId"),
+                    devPin = parsed.get("DevPin"),
+                    token = parsed.get("Token"),
+                    frameType = parsed.get("FrameType"),
+                    timeStamp = parsed.get("TimeStamp"),
+                    devStatus = parsed.get("DevStatus"),
+                    alarms = parsed.get("Alarms"),
+                    boilerTempAct = parsed.get("BoilerTempAct"),
+                    boilerTempCmd = parsed.get("BoilerTempCmd"),
+                    boilerHist = parsed.get("BoilerHist"),
+                    dHWTempAct = parsed.get("DHWTempAct"),
+                    dHWTempCmd = parsed.get("DHWTempCmd"),
+                    dHWOverH = parsed.get("DHWOverH"),
+                    dHWHist = parsed.get("DHWHist"),
+                    dHWMode = parsed.get("DHWMode"),
+                    cH1RoomTempAct = parsed.get("CH1RoomTempAct"),
+                    cH1RoomTempCom = parsed.get("CH1RoomTempCom"),
+                    cH1RoomTempCmd = parsed.get("CH1RoomTempCmd"),
+                    cH1RoomHist = parsed.get("CH1RoomHist"),
+                    cH1Mode = parsed.get("CH1Mode"),
+                    weaTempAct = parsed.get("WeaTempAct"),
+                    weaCorr = parsed.get("WeaCorr"),
+                    upTime = parsed.get("UpTime"),
+                    buModulMax = parsed.get("BuModulMax"),
+                    p001 = parsed.get("P001"),
+                    p002 = parsed.get("P002"),
+                    p003 = parsed.get("P003"),
+                    p004 = parsed.get("P004"),
+                    p005 = parsed.get("P005"),
+                    p006 = parsed.get("P006"),
+                    p007 = parsed.get("P007"),
+                    p008 = parsed.get("P008"),
+                    p009 = parsed.get("P009"),
+                    p011 = parsed.get("P011"),
+                    p012 = parsed.get("P012"),
+                    p013 = parsed.get("P013"),
+                    p014 = parsed.get("P014"),
+                    p015 = parsed.get("P015"),
+                    p016 = parsed.get("P016"),
+                    p017 = parsed.get("P017"),
+                    p018 = parsed.get("P018"),
+                    p019 = parsed.get("P019"),
+                    p021 = parsed.get("P021"),
+                    p022 = parsed.get("P022"),
+                    p023 = parsed.get("P023"),
+                    p024 = parsed.get("P024"),
+                    p025 = parsed.get("P025"),
+                    p026 = parsed.get("P026"),
+                    p027 = parsed.get("P027"),
+                    p028 = parsed.get("P028"),
+                    p029 = parsed.get("P029"),
+                    p030 = parsed.get("P030"),
+                    p031 = parsed.get("P031"),
+                    p032 = parsed.get("P032"),
+                    p033 = parsed.get("P033"),
+                    p034 = parsed.get("P034"),
+                    p035 = parsed.get("P035"),
+                    p036 = parsed.get("P036"),
+                    devType = parsed.get("DevType")):
+                    if self.proxy.boilerTempCmd != boiler_temp or self.proxy.bBuModulMax != boiler_power:
+                        self.send_command()
                     async_dispatcher_send(self.proxy._hass, SIGNAL_UPDATE)
-
+                    
             except json.JSONDecodeError:
                 _LOGGER.debug("[C] Waiting for full JSON chunk")
             finally:
@@ -154,15 +260,27 @@ class ProxyConnection(asyncio.Protocol):
     def send_command(self):
         reply = {
             "FrameType": "DataToSen",
-            "Token": self.proxy.token,
+            "Token": self.proxy.serverToken,
             "DevId": self.proxy.dev_id,
             "DevPin": self.proxy.dev_pin,
-            "BoilerTempCmd": self.proxy.last_temp or 6500,
-            "BoilerHist": "200",
+            "BoilerTempCmd": self.proxy.boilerTempCmd or 6500,
+            "BoilerHist": self.proxy.boilerHist or 200,
             "CH1Mode": "Still_On",
-            "BuModulMax": self.proxy.last_power or 1
+            "BuModulMax": self.proxy.buModulMax or 1
         }
         msg = json.dumps(reply)
         _LOGGER.info("→ Sending to client: %s", msg)
         if self.transport:
             self.transport.write(msg.encode())
+
+    def update(self, **kwargs):
+        updated = False
+        for key, new_value in kwargs.items():
+            if hasattr(self, key):
+                current_value = getattr(self, key)
+                if str(current_value) != str(new_value):
+                    setattr(self, key, new_value)
+                    updated = True
+
+        return updated
+    
