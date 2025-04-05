@@ -27,11 +27,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = proxy
 
-    #await hass.config_entries.async_forward_entry_setups(entry, ["sensor"])
+    await hass.config_entries.async_forward_entry_setups(entry, ["sensor"])
 
     hass.services.async_register(DOMAIN, "set_elterm_parameters", handle_command,vol.Schema({vol.Optional(CONF_TEMP): vol.Coerce(int),vol.Optional(CONF_MODUL): vol.Coerce(int)}))
-    hass.async_create_task(hass.helpers.discovery.async_load_platform("sensor", DOMAIN, {}, entry))
-    hass.async_create_task(hass.helpers.discovery.async_load_platform("number", DOMAIN, {}, hass.helpers.discovery.async_load_platform("sensor", DOMAIN, {}, entry)))
+    #hass.async_create_task(hass.helpers.discovery.async_load_platform("sensor", DOMAIN, {}, entry))
+    #hass.async_create_task(hass.helpers.discovery.async_load_platform("number", DOMAIN, {}, hass.helpers.discovery.async_load_platform("sensor", DOMAIN, {}, entry)))
 
     return True
 
