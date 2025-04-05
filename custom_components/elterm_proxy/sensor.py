@@ -48,6 +48,7 @@ class EltermProxySensor(SensorEntity):
         return f"{DOMAIN}_{self._key}"
 
     def update_state(self):
+        _LOGGER.debug("Update sensor %s", self._key)
         if self._key == "elterm_boiler_temp":
             self._state = self._proxy.last_temp / 100
         elif self._key == "elterm_boiler_power":

@@ -115,8 +115,8 @@ class ProxyConnection(asyncio.Protocol):
         self.response_buffer += decoded
 
         try:
-            _LOGGER.debug("[C] %s", self.response_buffer.strip())
             parsed = json.loads(self.response_buffer)
+            _LOGGER.debug("[C] %s", self.response_buffer.strip())
             self.response_buffer = ""
 
             self.proxy.BoilerTempAct = parsed.get("BoilerTempAct")
