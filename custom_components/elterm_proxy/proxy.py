@@ -123,7 +123,6 @@ class ProxyConnection(asyncio.Protocol):
                 _LOGGER.debug("-------------------------")
                 self.response_buffer = ""
                 parsed = json.loads(match.group(0))
-                _LOGGER.info("[C] JSON OK")
 
                 boilerTempAct = parsed.get("BoilerTempAct")
                 boilerTempCmd = parsed.get("BoilerTempCmd")
