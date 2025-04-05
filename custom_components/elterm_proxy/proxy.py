@@ -157,7 +157,7 @@ class ProxyConnection(asyncio.Protocol):
             "BoilerTempCmd": self.proxy.last_temp or 6500,
             "BoilerHist": "200",
             "CH1Mode": "Still_On",
-            "BuModulMax": self.proxy.last_power or 2
+            "BuModulMax": self.proxy.last_power or 1
         }
         msg = json.dumps(reply)
         _LOGGER.info("→ Sending to client: %s", msg)
