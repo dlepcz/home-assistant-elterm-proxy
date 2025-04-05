@@ -126,17 +126,13 @@ class ProxyConnection(asyncio.Protocol):
                 _LOGGER.info("[C] JSON OK")
 
                 self.proxy.BoilerTempAct = parsed.get("BoilerTempAct")
-                boiler_temp = self.proxy.get_command_from_state(CMD_TEMP_ENTITY, 65) * 100
-                boiler_power = self.proxy.get_command_from_state(CMD_POWER_ENTITY, 2)
+                boiler_temp = str(self.proxy.get_command_from_state(CMD_TEMP_ENTITY, 65) * 100)
+                boiler_power = str(self.proxy.get_command_from_state(CMD_POWER_ENTITY, 1))
 
-                if parsed.get("BoilerTempCmd") != boiler_temp:
-                    _LOGGER.info("[C] Update temperature")
+                _LOGGER.debug("Temperature %s -> %s", boiler_temp, parsed.get("BoilerTempCmd"))
+                _LOGGER.debug("Power %s -> %s", boiler_power, parsed.get("BuModulMax"))
+                if parsed.get("BoilerTempCmd") != boiler_temp or parsed.get("BuModulMax") != boiler_power:
                     self.proxy.last_temp = boiler_temp
-                    self.send_command()
-
-                if parsed.get("BuModulMax") != boiler_power:
-                    _LOGGER.info("[C] Update power")
-                    self.proxy.last_power = boiler_power
                     self.send_command()
 
                 async_dispatcher_send(self.proxy._hass, SIGNAL_UPDATE)
