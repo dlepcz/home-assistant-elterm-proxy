@@ -133,6 +133,7 @@ class ProxyConnection(asyncio.Protocol):
                 _LOGGER.debug("Power %s -> %s", boiler_power, parsed.get("BuModulMax"))
                 if parsed.get("BoilerTempCmd") != boiler_temp or parsed.get("BuModulMax") != boiler_power:
                     self.proxy.last_temp = boiler_temp
+                    self.proxy.last_power = boiler_power
                     self.send_command()
 
                 async_dispatcher_send(self.proxy._hass, SIGNAL_UPDATE)
