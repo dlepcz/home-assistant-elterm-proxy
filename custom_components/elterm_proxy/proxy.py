@@ -125,18 +125,20 @@ class ProxyConnection(asyncio.Protocol):
                 parsed = json.loads(match.group(0))
                 _LOGGER.info("[C] JSON OK")
 
-                self.proxy.BoilerTempAct = parsed.get("BoilerTempAct")
+                boilerTempAct = parsed.get("BoilerTempAct")
+                boilerTempCmd = parsed.get("BoilerTempCmd")
+                bBuModulMax = parsed.get("BuModulMax")
                 boiler_temp = str(self.proxy.get_command_from_state(CMD_TEMP_ENTITY, 65) * 100)
                 boiler_power = str(self.proxy.get_command_from_state(CMD_POWER_ENTITY, 1))
 
-                _LOGGER.debug("Temperature %s -> %s", boiler_temp, parsed.get("BoilerTempCmd"))
-                _LOGGER.debug("Power %s -> %s", boiler_power, parsed.get("BuModulMax"))
-                if parsed.get("BoilerTempCmd") != boiler_temp or parsed.get("BuModulMax") != boiler_power:
-                    self.proxy.last_temp = boiler_temp
-                    self.proxy.last_power = boiler_power
+                if boilerTempCmd != boiler_temp or bBuModulMax != boiler_power:
                     self.send_command()
 
-                async_dispatcher_send(self.proxy._hass, SIGNAL_UPDATE)
+                if boilerTempCmd != self.proxy.last_temp or self.proxy.BoilerTempAct != boilerTempAct or self.proxy.last_power != bBuModulMax:
+                    self.proxy.last_temp = boiler_temp
+                    self.proxy.last_power = boiler_power
+                    self.proxy.BoilerTempAct = boilerTempAct
+                    async_dispatcher_send(self.proxy._hass, SIGNAL_UPDATE)
 
             except json.JSONDecodeError:
                 _LOGGER.debug("[C] Waiting for full JSON chunk")
