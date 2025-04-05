@@ -132,6 +132,8 @@ class ProxyConnection(asyncio.Protocol):
                 boiler_power = str(self.proxy.get_command_from_state(CMD_POWER_ENTITY, 1))
 
                 if boilerTempCmd != boiler_temp or bBuModulMax != boiler_power:
+                    self.proxy.last_temp = boiler_temp
+                    self.proxy.last_power = boiler_power
                     self.send_command()
 
                 if boilerTempCmd != self.proxy.last_temp or self.proxy.BoilerTempAct != boilerTempAct or self.proxy.last_power != bBuModulMax:
