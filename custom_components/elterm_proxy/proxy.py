@@ -122,11 +122,11 @@ class ProxyConnection(asyncio.Protocol):
 
             if parsed.get("BoilerTempCmd") != boiler_temp:
                 self.proxy.last_temp = boiler_temp
-                self.send_command("BoilerTempCmd", boiler_temp)
+                self.send_command()
 
-            if parsed.get("BoilerPowerCmd") != boiler_power:
+            if parsed.get("BuModulMax") != boiler_power:
                 self.proxy.last_power = boiler_power
-                self.send_command("BoilerPowerCmd", boiler_power)
+                self.send_command()
 
             async_dispatcher_send(self.proxy._hass, SIGNAL_UPDATE)
             self.response_buffer = ""
@@ -139,7 +139,7 @@ class ProxyConnection(asyncio.Protocol):
         else:
             _LOGGER.warning("Skipping forward: remote not connected")
 
-    def send_command(self, field, value):
+    def send_command(self):
         reply = {
             "FrameType": "DataToSen",
             "Token": self.proxy.token,
@@ -148,9 +148,8 @@ class ProxyConnection(asyncio.Protocol):
             "BoilerTempCmd": self.proxy.last_temp or 6500,
             "BoilerHist": "200",
             "CH1Mode": "Still_On",
-            "BuModulMax": "1"
+            "BuModulMax": self.proxy.last_power or 2
         }
-        reply[field] = value
         msg = json.dumps(reply)
         _LOGGER.info("→ Sending to client: %s", msg)
         if self.transport:
