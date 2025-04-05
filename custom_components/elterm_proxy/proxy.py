@@ -258,6 +258,9 @@ class ProxyConnection(asyncio.Protocol):
             _LOGGER.warning("Skipping forward: remote not connected")
 
     def send_command(self):
+        if not all([self.proxy.serverToken, self.proxy.dev_id, self.proxy.dev_pin]):
+            _LOGGER.warning("Empty Token/DevId/DevPin")
+            return
         reply = {
             "FrameType": "DataToSen",
             "Token": self.proxy.serverToken,

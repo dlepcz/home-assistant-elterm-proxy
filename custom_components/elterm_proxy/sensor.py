@@ -8,10 +8,6 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass, config_entry, async_add_entities):
     proxy = hass.data[DOMAIN][config_entry.entry_id]
     sensors = [
-        EltermProxySensor(proxy, "elterm_boiler_temp", "Elterm Boiler Temperature", "°C"),
-        EltermProxySensor(proxy, "elterm_boiler_current_temp", "Elterm Boiler Current Temperature", "°C"),
-        EltermProxySensor(proxy, "elterm_boiler_power", "Elterm Boiler Power", "%"),
-        EltermProxySensor(proxy, "elterm_boiler_token", "Server token", None),
         EltermProxySensor(proxy, "elterm_devId", "", None),
         EltermProxySensor(proxy, "elterm_devPin", "", None),
         EltermProxySensor(proxy, "elterm_token", "", None),
@@ -23,7 +19,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         EltermProxySensor(proxy, "elterm_alarms", "", None),
         EltermProxySensor(proxy, "elterm_boilerTempAct", "", "°C"),
         EltermProxySensor(proxy, "elterm_boilerTempCmd", "", "°C"),
-        EltermProxySensor(proxy, "elterm_boilerHist", "", ""),
+        EltermProxySensor(proxy, "elterm_boilerHist", "", "°C"),
         EltermProxySensor(proxy, "elterm_dHWTempAct", "", "°C"),
         EltermProxySensor(proxy, "elterm_dHWTempCmd", "", "°C"),
         EltermProxySensor(proxy, "elterm_dHWOverH", "", ""),
@@ -106,8 +102,31 @@ class EltermProxySensor(SensorEntity):
         return self._unit
 
     @property
+    def unit_of_measurement(self):
+        if "Temp" in self._key:
+            return "°C"
+        if "buModul" in self._key:
+            return "%"
+        
+    @property
+    def device_class(self):
+        if "Temp" in self._key:
+            return "temperature"
+    
+    @property
     def unique_id(self):
         return f"{DOMAIN}_{self._key}"
+
+    @property
+    def state(self):
+        value = self.hass.data[DOMAIN]["values"].get(self._key)
+        if "Temp" in self._key:
+            try:
+                return int(value) / 100
+            except:
+                return value
+            
+        return value
 
     def update_state(self):
         _LOGGER.debug("Update sensor %s", self._key)
@@ -131,15 +150,15 @@ class EltermProxySensor(SensorEntity):
             case "elterm_alarms":
                 self._state = self._proxy.alarms
             case "elterm_boilerTempAct": 
-                self._state = str(int(self._proxy.boilerTempAct) / 100)
+                self._state = self._proxy.boilerTempAct
             case "elterm_boilerTempCmd": 
-                self._state = str(int(self._proxy.boilerTempCmd) / 100)
+                self._state = self._proxy.boilerTempCmd
             case "elterm_boilerHist": 
-                self._state = str(int(self._proxy.boilerHist) / 100)
+                self._state = self._proxy.boilerHist
             case "elterm_dHWTempAct": 
-                self._state = str(int(self._proxy.dHWTempAct) / 100)
+                self._state = self._proxy.dHWTempAct
             case "elterm_dHWTempCmd": 
-                self._state = str(int(self._proxy.dHWTempCmd) / 100)
+                self._state = self._proxy.dHWTempCmd
             case "elterm_dHWOverH": 
                 self._state = self._proxy.dHWOverH
             case "elterm_dHWHist": 
@@ -147,17 +166,17 @@ class EltermProxySensor(SensorEntity):
             case "elterm_dHWMode": 
                 self._state = self._proxy.dHWMode
             case "elterm_cH1RoomTempAct": 
-                self._state = str(int(self._proxy.cH1RoomTempAct) / 100)
+                self._state = self._proxy.cH1RoomTempAct
             case "elterm_cH1RoomTempCom": 
-                self._state = str(int(self._proxy.cH1RoomTempCom) / 100)
+                self._state = self._proxy.cH1RoomTempCom
             case "elterm_cH1RoomTempCmd": 
-                self._state = str(int(self._proxy.cH1RoomTempCmd) / 100)
+                self._state = self._proxy.cH1RoomTempCmd
             case "elterm_cH1RoomHist": 
                 self._state = self._proxy.cH1RoomHist
             case "elterm_cH1Mode": 
                 self._state = self._proxy.cH1Mode
             case "elterm_weaTempAct": 
-                self._state = str(int(self._proxy.weaTempAct) / 100)
+                self._state = self._proxy.weaTempAct
             case "elterm_weaCorr": 
                 self._state = self._proxy.weaCorr
             case "elterm_upTime": 
@@ -244,17 +263,3 @@ class EltermProxySensor(SensorEntity):
                 self._state = self._proxy.p036
             case "elterm_devType": 
                 self._state = self._proxy.devType 
-                
-        if self._key == "elterm_boiler_temp":
-            self._state = str(int(self._proxy.last_temp) / 100)
-        elif self._key == "elterm_boiler_power":
-            if self._proxy.last_power == "1":
-                self._state = "33"
-            elif self._proxy.last_power == "2":
-                self._state = "67"
-            else:
-                self._state = "100"        
-        elif self._key == "elterm_boiler_token":
-            self._state = self._proxy.token
-        elif self._key == "elterm_boiler_current_temp":
-            self._state = str(int(self._proxy.BoilerTempAct) / 100)
