@@ -2,6 +2,7 @@ import asyncio
 import socket
 import json
 import logging
+import re
 from typing import Optional
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from .const import SIGNAL_UPDATE, CMD_TEMP_ENTITY, CMD_POWER_ENTITY
@@ -114,14 +115,15 @@ class ProxyConnection(asyncio.Protocol):
         decoded = data.decode(errors='ignore')
         self.response_buffer += decoded
 
-        if self.response_buffer[-1] == "}":
+        match = re.search(r'\{.*?\}', self.response_buffer)
+        if match:
             try:
                 _LOGGER.debug("-------------------------")
                 _LOGGER.debug("[C] %s", self.response_buffer.strip())
                 _LOGGER.debug("-------------------------")
-                parsed = json.loads(self.response_buffer)
-                _LOGGER.info("[C] JSON OK")
                 self.response_buffer = ""
+                parsed = json.loads(match.group(0))
+                _LOGGER.info("[C] JSON OK")
 
                 self.proxy.BoilerTempAct = parsed.get("BoilerTempAct")
                 boiler_temp = self.proxy.get_command_from_state(CMD_TEMP_ENTITY, 65) * 100
@@ -141,6 +143,7 @@ class ProxyConnection(asyncio.Protocol):
 
             except json.JSONDecodeError:
                 _LOGGER.debug("[C] Waiting for full JSON chunk")
+            finally:
                 self.response_buffer = ""
 
         if self._remote_connected.is_set():
