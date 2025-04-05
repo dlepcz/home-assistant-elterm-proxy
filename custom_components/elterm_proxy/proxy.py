@@ -115,28 +115,29 @@ class ProxyConnection(asyncio.Protocol):
         self.response_buffer += decoded
 
         try:
-            _LOGGER.debug("-------------------------")
-            _LOGGER.debug("[C] %s", self.response_buffer.strip())
-            _LOGGER.debug("-------------------------")
-            parsed = json.loads(self.response_buffer)
-            _LOGGER.info("[C] JSON OK")
-            self.response_buffer = ""
+            if self.response_buffer[-1] == "}":
+                _LOGGER.debug("-------------------------")
+                _LOGGER.debug("[C] %s", self.response_buffer.strip())
+                _LOGGER.debug("-------------------------")
+                parsed = json.loads(self.response_buffer)
+                _LOGGER.info("[C] JSON OK")
+                self.response_buffer = ""
 
-            self.proxy.BoilerTempAct = parsed.get("BoilerTempAct")
-            boiler_temp = self.proxy.get_command_from_state(CMD_TEMP_ENTITY, 65) * 100
-            boiler_power = self.proxy.get_command_from_state(CMD_POWER_ENTITY, 2)
+                self.proxy.BoilerTempAct = parsed.get("BoilerTempAct")
+                boiler_temp = self.proxy.get_command_from_state(CMD_TEMP_ENTITY, 65) * 100
+                boiler_power = self.proxy.get_command_from_state(CMD_POWER_ENTITY, 2)
 
-            if parsed.get("BoilerTempCmd") != boiler_temp:
-                _LOGGER.info("[C] Update temperature")
-                self.proxy.last_temp = boiler_temp
-                self.send_command()
+                if parsed.get("BoilerTempCmd") != boiler_temp:
+                    _LOGGER.info("[C] Update temperature")
+                    self.proxy.last_temp = boiler_temp
+                    self.send_command()
 
-            if parsed.get("BuModulMax") != boiler_power:
-                _LOGGER.info("[C] Update power")
-                self.proxy.last_power = boiler_power
-                self.send_command()
+                if parsed.get("BuModulMax") != boiler_power:
+                    _LOGGER.info("[C] Update power")
+                    self.proxy.last_power = boiler_power
+                    self.send_command()
 
-            async_dispatcher_send(self.proxy._hass, SIGNAL_UPDATE)
+                async_dispatcher_send(self.proxy._hass, SIGNAL_UPDATE)
 
         except json.JSONDecodeError:
             _LOGGER.debug("[C] Waiting for full JSON chunk")
