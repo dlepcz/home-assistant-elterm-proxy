@@ -17,20 +17,20 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         EltermProxySensor(proxy, "elterm_devStatus", "Boiler status", None),
         EltermProxySensor(proxy, "elterm_pumpStatus", "Pump status", None),
         EltermProxySensor(proxy, "elterm_alarms", "", None),
-        EltermProxySensor(proxy, "elterm_boilerTempAct", "", "°C"),
-        EltermProxySensor(proxy, "elterm_boilerTempCmd", "", "°C"),
-        EltermProxySensor(proxy, "elterm_boilerHist", "", "°C"),
-        EltermProxySensor(proxy, "elterm_dHWTempAct", "", "°C"),
-        EltermProxySensor(proxy, "elterm_dHWTempCmd", "", "°C"),
+        EltermProxySensor(proxy, "elterm_boilerTempAct", "", "°C", "temperature", 100),
+        EltermProxySensor(proxy, "elterm_boilerTempCmd", "", "°C", "temperature", 100),
+        EltermProxySensor(proxy, "elterm_boilerHist", "", "°C", "temperature", 100),
+        EltermProxySensor(proxy, "elterm_dHWTempAct", "", "°C", "temperature", 100),
+        EltermProxySensor(proxy, "elterm_dHWTempCmd", "", "°C", "temperature", 100),
         EltermProxySensor(proxy, "elterm_dHWOverH", "", ""),
         EltermProxySensor(proxy, "elterm_dHWHist", "", ""),
         EltermProxySensor(proxy, "elterm_dHWMode", "", ""),
-        EltermProxySensor(proxy, "elterm_cH1RoomTempAct", "", "°C"),
-        EltermProxySensor(proxy, "elterm_cH1RoomTempCom", "", "°C"),
-        EltermProxySensor(proxy, "elterm_cH1RoomTempCmd", "", "°C"),
+        EltermProxySensor(proxy, "elterm_cH1RoomTempAct", "", "°C", "temperature", 100),
+        EltermProxySensor(proxy, "elterm_cH1RoomTempCom", "", "°C", "temperature", 100),
+        EltermProxySensor(proxy, "elterm_cH1RoomTempCmd", "", "°C", "temperature", 100),
         EltermProxySensor(proxy, "elterm_cH1RoomHist", "", ""),
         EltermProxySensor(proxy, "elterm_cH1Mode", "", ""),
-        EltermProxySensor(proxy, "elterm_weaTempAct", "", "°C"),
+        EltermProxySensor(proxy, "elterm_weaTempAct", "", "°C", "temperature", 100),
         EltermProxySensor(proxy, "elterm_weaCorr", "", ""),
         EltermProxySensor(proxy, "elterm_upTime", "", ""),
         EltermProxySensor(proxy, "elterm_buModulMax", "Max power", "%"),
@@ -82,11 +82,13 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
 
 class EltermProxySensor(SensorEntity):
-    def __init__(self, proxy, key, name, unit):
+    def __init__(self, proxy, key, name, unit, deviceClass, scale):
         self._proxy = proxy
         self._key = key
         self._name = name
         self._unit = unit
+        self._deviceClass = deviceClass
+        self._scale = scale
         self._state = None
 
     @property
@@ -103,15 +105,11 @@ class EltermProxySensor(SensorEntity):
 
     @property
     def unit_of_measurement(self):
-        if "Temp" in self._key:
-            return "°C"
-        if "buModul" in self._key:
-            return "%"
+        return self._unit
         
     @property
     def device_class(self):
-        if "Temp" in self._key:
-            return "temperature"
+        return self._deviceClass
     
     @property
     def unique_id(self):
@@ -120,9 +118,9 @@ class EltermProxySensor(SensorEntity):
     @property
     def state(self):
         value = self.hass.data[DOMAIN]["values"].get(self._key)
-        if "Temp" in self._key:
+        if self._scale != None:
             try:
-                return int(value) / 100
+                return int(value) / self._scale
             except:
                 return value
             

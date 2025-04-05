@@ -1,0 +1,21 @@
+set_parameters:
+  name: Elterm parameters to set
+  description: 
+  fields:
+    BoilerTempCmd:
+      name: Temperature
+      description: Boiler set temperature
+      required: false
+      selector:
+        number:
+          min: 20
+          max: 70
+          step: 1
+    BuModulMax:
+      name: Power
+      description: Boiler set power
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 2
