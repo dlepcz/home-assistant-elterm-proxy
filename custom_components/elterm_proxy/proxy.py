@@ -115,6 +115,9 @@ class ProxyConnection(asyncio.Protocol):
         self.response_buffer += decoded
 
         try:
+            _LOGGER.debug("-------------------------")
+            _LOGGER.debug("[C] %s", self.response_buffer.strip())
+            _LOGGER.debug("-------------------------")
             parsed = json.loads(self.response_buffer)
             _LOGGER.info("[C] JSON OK")
             self.response_buffer = ""
