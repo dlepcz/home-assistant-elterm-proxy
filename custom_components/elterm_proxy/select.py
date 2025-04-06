@@ -13,24 +13,25 @@ async def async_setup_entry(
     config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
+    proxy = hass.data[DOMAIN][config_entry.entry_id]
     async_add_entities(
         [
             EltermBoilerPowerSelect(
-                unique_id="elterm_setBoilerTempCmd",
-                device_name="Power",
+                unique_id=f"{proxy.name}_setBoilerTempCmd",
+                device_name=f"{proxy.name} Boiler power",
                 current_option="67%",
                 options=[
                     "33%",
                     "67%",
                     "100%",
-                ]
+                ],
+                translation_key="selterm_setBoilerTempCmd"
             ),
         ]
     )
 
 
 class EltermBoilerPowerSelect(SelectEntity):
-    """Representation of a demo select entity."""
 
     _attr_has_entity_name = True
     _attr_name = None
@@ -42,7 +43,7 @@ class EltermBoilerPowerSelect(SelectEntity):
         device_name: str,
         current_option: str | None,
         options: list[str],
-        translation_key: str | None,
+        translation_key: str,
     ) -> None:
         self._attr_unique_id = unique_id
         self._attr_current_option = current_option

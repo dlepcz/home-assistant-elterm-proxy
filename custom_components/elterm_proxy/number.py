@@ -15,12 +15,12 @@ async def async_setup_entry(
     config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up the demo number platform."""
+    proxy = hass.data[DOMAIN][config_entry.entry_id]
     async_add_entities(
         [
             EltermBoilerNumber(
-                "elterm_setBoilerTemp",
-                "Temperature",
+                f"{proxy.name}_setBoilerTemp",
+                f"{proxy.name} Temperature",
                 40,
                 None,
                 False,

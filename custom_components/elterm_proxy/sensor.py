@@ -113,7 +113,7 @@ class EltermProxySensor(SensorEntity):
     
     @property
     def unique_id(self):
-        return f"{DOMAIN}_{self._key}"
+        return f"{self._proxy.name}_{self._key}"
 
     @property
     def state(self):
