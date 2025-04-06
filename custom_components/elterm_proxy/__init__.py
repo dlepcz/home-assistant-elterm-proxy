@@ -8,9 +8,6 @@ from .proxy import EltermProxy
 
 _LOGGER = logging.getLogger(__name__)
 
-CONF_TEMP = "SetBoilerTempCmd"
-CONF_MODUL = "SetBuModulMax"
-
 PLATFORMS = ["number", "select", "sensor"]
 
 async def async_setup(hass: HomeAssistant, config: dict):
@@ -19,10 +16,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     _LOGGER.info("Setting up Elterm Proxy integration")
-
-    #async def handle_command(call):
-        #_LOGGER.debug("handle_command")
-
+    
     proxy = EltermProxy(entry.data, hass)
     await proxy.start()
 

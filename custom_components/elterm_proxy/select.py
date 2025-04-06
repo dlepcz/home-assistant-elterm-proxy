@@ -17,7 +17,7 @@ async def async_setup_entry(
         [
             EltermBoilerPowerSelect(
                 unique_id="elterm_setBoilerTempCmd",
-                device_name="Elterm set boiler power",
+                device_name="Power",
                 current_option="67%",
                 options=[
                     "33%",

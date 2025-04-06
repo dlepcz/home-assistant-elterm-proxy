@@ -20,7 +20,7 @@ async def async_setup_entry(
         [
             EltermBoilerNumber(
                 "elterm_setBoilerTemp",
-                "Elterm set boiler temperature",
+                "Temperature",
                 40,
                 None,
                 False,

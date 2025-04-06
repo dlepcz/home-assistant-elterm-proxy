@@ -5,6 +5,7 @@ import logging
 import re
 from typing import Optional
 from homeassistant.helpers.dispatcher import async_dispatcher_send
+from homeassistant.const import CONF_NAME
 from .const import SIGNAL_UPDATE, CMD_TEMP_ENTITY, CMD_POWER_ENTITY
 
 _LOGGER = logging.getLogger(__name__)
@@ -17,6 +18,7 @@ class EltermProxy:
         self._config = config
         self._server = None
         self._tasks = []
+        self.name = config.get(CONF_NAME)
         self.serverToken = "XXXXXX"
         self.dev_id = config.get("dev_id")
         self.dev_pin = config.get("dev_pin")
