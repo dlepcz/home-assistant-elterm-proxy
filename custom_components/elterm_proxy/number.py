@@ -1,33 +1,83 @@
-from homeassistant.components.number import NumberEntity
+from __future__ import annotations
+
+from homeassistant.components.number import NumberDeviceClass, NumberEntity, NumberMode
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import UnitOfTemperature
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+
 from .const import DOMAIN
 
-CONTROL_PARAMS = {
-    "SetBoilerTempCmd": {"min": 20, "max": 90, "step": 1, "unit": "°C", "scale": 100},
-    "SetBuModulMax": {"min": 0, "max": 2, "step": 1, "unit": "mod", "scale": 1}
-}
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    numbers = []
-    for key in CONTROL_PARAMS:
-        numbers.append(EltermNumber(hass, key))
-        hass.data[DOMAIN]["entities"][key] = numbers[-1]
-    async_add_entities(numbers)
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up the demo number platform."""
+    async_add_entities(
+        [
+            EltermBoilerNumber(
+                "elterm_setBoilerTemp",
+                "Elterm set boiler temperature",
+                40,
+                None,
+                False,
+                device_class=NumberDeviceClass.TEMPERATURE,
+                native_min_value=20,
+                native_max_value=70,
+                native_step=1,
+                mode=NumberMode.BOX,
+                unit_of_measurement=UnitOfTemperature.CELSIUS,
+            ),
+        ]
+    )
 
-class EltermNumber(NumberEntity):
-    def __init__(self, hass, key):
-        self._hass = hass
-        self._key = key
-        self._attr_name = f"Elterm {key}"
-        self._attr_unique_id = f"elterm_{key.lower()}"
-        self._attr_native_unit_of_measurement = CONTROL_PARAMS[key]["unit"]
 
-    @property
-    def native_value(self):
-        raw = self._hass.data[DOMAIN]["values"].get(self._key)
-        if raw is None:
-            return None
-        return int(raw) / CONTROL_PARAMS[self._key]["scale"]
+class EltermBoilerNumber(NumberEntity):
 
-    def set_native_value(self, value):
-        scaled = int(value * CONTROL_PARAMS[self._key]["scale"])
-        self._hass.services.call(DOMAIN, "set_elterm_parameters", {self._key: scaled})
+    _attr_has_entity_name = True
+    _attr_name = None
+    _attr_should_poll = False
+
+    def __init__(
+        self,
+        unique_id: str,
+        device_name: str,
+        state: float,
+        translation_key: str | None,
+        assumed_state: bool,
+        *,
+        device_class: NumberDeviceClass | None = None,
+        mode: NumberMode = NumberMode.AUTO,
+        native_min_value: float | None = None,
+        native_max_value: float | None = None,
+        native_step: float | None = None,
+        unit_of_measurement: str | None = None,
+    ) -> None:
+        self._attr_assumed_state = assumed_state
+        self._attr_device_class = device_class
+        self._attr_translation_key = translation_key
+        self._attr_mode = mode
+        self._attr_native_unit_of_measurement = unit_of_measurement
+        self._attr_native_value = state
+        self._attr_unique_id = unique_id
+
+        if native_min_value is not None:
+            self._attr_native_min_value = native_min_value
+        if native_max_value is not None:
+            self._attr_native_max_value = native_max_value
+        if native_step is not None:
+            self._attr_native_step = native_step
+
+        self._attr_device_info = DeviceInfo(
+            identifiers={
+                (DOMAIN, unique_id)
+            },
+            name=device_name,
+        )
+
+    async def async_set_native_value(self, value: float) -> None:
+        self._attr_native_value = value
+        self.async_write_ha_state()
