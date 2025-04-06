@@ -18,6 +18,8 @@ class EltermProxy:
         self._config = config
         self._server = None
         self._tasks = []
+        self.boiler_temp = 6500
+        self.boiler_power = 1
         self.name = config.get(CONF_NAME)
         self.serverToken = "XXXXXX"
         self.dev_id = config.get("dev_id")
@@ -183,9 +185,6 @@ class ProxyConnection(asyncio.Protocol):
                 self.response_buffer = ""
                 parsed = json.loads(match.group(0))
           
-                boiler_temp = str(self.proxy.get_command_from_state(CMD_TEMP_ENTITY, 65) * 100)
-                boiler_power = str(self.proxy.get_command_from_state(CMD_POWER_ENTITY, 1))
-
                 if self.update(devId=parsed.get("DevId"),
                     devPin = parsed.get("DevPin"),
                     token = parsed.get("Token"),
@@ -245,7 +244,7 @@ class ProxyConnection(asyncio.Protocol):
                     p035 = parsed.get("P035"),
                     p036 = parsed.get("P036"),
                     devType = parsed.get("DevType")):
-                    if self.proxy.boilerTempCmd != boiler_temp or self.proxy.bBuModulMax != boiler_power:
+                    if self.proxy.boilerTempCmd != self.boiler_temp or self.proxy.bBuModulMax != self.boiler_power:
                         self.send_command()
                     async_dispatcher_send(self.proxy._hass, SIGNAL_UPDATE)
                     

@@ -71,13 +71,6 @@ class EltermBoilerNumber(NumberEntity):
         if native_step is not None:
             self._attr_native_step = native_step
 
-        self._attr_device_info = DeviceInfo(
-            identifiers={
-                (DOMAIN, unique_id)
-            },
-            name=device_name,
-        )
-
     async def async_set_native_value(self, value: float) -> None:
         self._attr_native_value = value
         self.async_write_ha_state()
