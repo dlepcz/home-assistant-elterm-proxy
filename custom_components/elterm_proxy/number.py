@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+from . import EltermProxy, EltermEntity
 from homeassistant.components.number import NumberDeviceClass, NumberEntity, NumberMode
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature
@@ -19,6 +19,7 @@ async def async_setup_entry(
     async_add_entities(
         [
             EltermBoilerNumber(
+                proxy,
                 f"{proxy.name}_setBoilerTemp",
                 f"{proxy.name} Temperature",
                 40,
@@ -29,13 +30,13 @@ async def async_setup_entry(
                 native_max_value=70,
                 native_step=1,
                 mode=NumberMode.BOX,
-                unit_of_measurement=UnitOfTemperature.CELSIUS,
+                unit_of_measurement=UnitOfTemperature.CELSIUS
             ),
         ]
     )
 
 
-class EltermBoilerNumber(NumberEntity):
+class EltermBoilerNumber(NumberEntity, EltermEntity):
 
     _attr_has_entity_name = True
     _attr_name = None
@@ -55,6 +56,7 @@ class EltermBoilerNumber(NumberEntity):
         native_max_value: float | None = None,
         native_step: float | None = None,
         unit_of_measurement: str | None = None,
+        proxy
     ) -> None:
         self._attr_assumed_state = assumed_state
         self._attr_device_class = device_class

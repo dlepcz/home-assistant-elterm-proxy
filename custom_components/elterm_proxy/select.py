@@ -1,5 +1,5 @@
 import logging
-from . import EltermProxy
+from . import EltermProxy, EltermEntity
 from .const import DOMAIN
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
@@ -33,7 +33,7 @@ async def async_setup_entry(
     )
 
 
-class EltermBoilerPowerSelect(EltermProxy, SelectEntity):
+class EltermBoilerPowerSelect(SelectEntity, EltermEntity):
 
     _attr_has_entity_name = True
     _attr_name = None
@@ -41,19 +41,19 @@ class EltermBoilerPowerSelect(EltermProxy, SelectEntity):
 
     def __init__(
         self,
-        proxy: EltermProxy,
         unique_id: str,
         device_name: str,
         current_option: str | None,
         options: list[str],
         translation_key: str,
+        proxy: EltermProxy,
     ) -> None:
         super().__init__(proxy)
         self._attr_unique_id = unique_id
         self._attr_current_option = current_option
         self._attr_options = options
         self._attr_translation_key = translation_key
-
+        
     async def async_select_option(self, option: str) -> None:
         if option == "33%":
             self.proxy.boiler_power = 0

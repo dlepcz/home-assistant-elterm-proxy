@@ -2,8 +2,12 @@ import asyncio
 import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.update_coordinator import (
+    CoordinatorEntity
+)
 import voluptuous as vol
-from .const import DOMAIN
+from .const import DOMAIN, ATTR_MANUFACTURER
 from .proxy import EltermProxy
 
 _LOGGER = logging.getLogger(__name__)
@@ -32,3 +36,16 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     await proxy.stop()
 
     return await hass.config_entries.async_forward_entry_unload(entry, PLATFORMS)
+
+class EltermEntity(CoordinatorEntity):
+    """Representation of a solaredge entity."""
+
+    def __init__(self, proxy: EltermProxy) -> None:
+       
+        super().__init__(proxy)
+        self.proxy = proxy
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, proxy.name)},
+            manufacturer=ATTR_MANUFACTURER,
+            name=proxy.name,
+        )
