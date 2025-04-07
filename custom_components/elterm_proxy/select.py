@@ -33,7 +33,7 @@ async def async_setup_entry(
     )
 
 
-class EltermBoilerPowerSelect(SelectEntity, EltermEntity):
+class EltermBoilerPowerSelect(EltermEntity, SelectEntity):
 
     _attr_has_entity_name = True
     _attr_name = None
@@ -41,12 +41,12 @@ class EltermBoilerPowerSelect(SelectEntity, EltermEntity):
 
     def __init__(
         self,
+        proxy: EltermProxy,
         unique_id: str,
         device_name: str,
         current_option: str | None,
         options: list[str],
         translation_key: str,
-        proxy: EltermProxy,
     ) -> None:
         super().__init__(proxy)
         self._attr_unique_id = unique_id

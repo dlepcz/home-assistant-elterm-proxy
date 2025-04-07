@@ -30,13 +30,13 @@ async def async_setup_entry(
                 native_max_value=70,
                 native_step=1,
                 mode=NumberMode.BOX,
-                unit_of_measurement=UnitOfTemperature.CELSIUS
+                unit_of_measurement=UnitOfTemperature.CELSIUS,
             ),
         ]
     )
 
 
-class EltermBoilerNumber(NumberEntity, EltermEntity):
+class EltermBoilerNumber(EltermEntity, NumberEntity):
 
     _attr_has_entity_name = True
     _attr_name = None
@@ -44,6 +44,7 @@ class EltermBoilerNumber(NumberEntity, EltermEntity):
 
     def __init__(
         self,
+        proxy: EltermProxy,
         unique_id: str,
         device_name: str,
         state: float,
@@ -56,7 +57,6 @@ class EltermBoilerNumber(NumberEntity, EltermEntity):
         native_max_value: float | None = None,
         native_step: float | None = None,
         unit_of_measurement: str | None = None,
-        proxy
     ) -> None:
         self._attr_assumed_state = assumed_state
         self._attr_device_class = device_class

@@ -38,7 +38,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     return await hass.config_entries.async_forward_entry_unload(entry, PLATFORMS)
 
 class EltermEntity(CoordinatorEntity):
-    """Representation of a solaredge entity."""
 
     def __init__(self, proxy: EltermProxy) -> None:
        
