@@ -78,6 +78,10 @@ class EltermBoilerNumber(EltermEntity, NumberEntity):
     def _handle_coordinator_update(self) -> None:
         super()._handle_coordinator_update()
 
+    @property
+    def current_option(self) -> str:
+        return int(self.proxy.boiler_temp) / 100
+    
     async def async_set_native_value(self, value: float) -> None:
         self.proxy.boiler_temp = str(value * 100)
         self._attr_native_value = value

@@ -34,9 +34,9 @@ async def async_setup_entry(
 
 class EltermBoilerPowerSelect(EltermEntity, SelectEntity):
 
-    #_attr_has_entity_name = True
-    #_attr_name = None
-    #_attr_should_poll = False
+    _attr_has_entity_name = True
+    _attr_name = None
+    _attr_should_poll = False
 
     def __init__(
         self,
@@ -58,6 +58,10 @@ class EltermBoilerPowerSelect(EltermEntity, SelectEntity):
     def _handle_coordinator_update(self) -> None:
         super()._handle_coordinator_update()
 
+    @property
+    def current_option(self) -> str:
+        return self.proxy.boiler_power
+    
     async def async_select_option(self, option: str) -> None:
         if option == "33%":
             self.proxy.boiler_power = 0
