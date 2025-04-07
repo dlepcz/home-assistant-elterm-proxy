@@ -6,13 +6,16 @@ import re
 from typing import Optional
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.const import CONF_NAME
+from homeassistant.helpers.update_coordinator import (
+    DataUpdateCoordinator
+)
 from .const import SIGNAL_UPDATE
 
 _LOGGER = logging.getLogger(__name__)
 
 BUFFER_SIZE = 4096
 
-class EltermProxy:
+class EltermProxy(DataUpdateCoordinator):
     def __init__(self, config, hass):
         self._hass = hass
         self._config = config
