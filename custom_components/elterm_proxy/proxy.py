@@ -6,7 +6,7 @@ import re
 from typing import Optional
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.const import CONF_NAME
-from .const import SIGNAL_UPDATE, CMD_TEMP_ENTITY, CMD_POWER_ENTITY
+from .const import SIGNAL_UPDATE
 
 _LOGGER = logging.getLogger(__name__)
 
