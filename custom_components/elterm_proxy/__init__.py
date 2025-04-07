@@ -4,8 +4,9 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import (
-    CoordinatorEntity
+    CoordinatorEntity,
 )
+from homeassistant.const import CONF_NAME
 import voluptuous as vol
 from .const import DOMAIN, ATTR_MANUFACTURER
 from .proxy import EltermProxy
