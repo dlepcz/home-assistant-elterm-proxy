@@ -3,8 +3,7 @@ from . import EltermProxy, EltermEntity
 from homeassistant.components.number import NumberDeviceClass, NumberEntity, NumberMode
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
@@ -58,6 +57,7 @@ class EltermBoilerNumber(EltermEntity, NumberEntity):
         native_step: float | None = None,
         unit_of_measurement: str | None = None,
     ) -> None:
+        super().__init__(proxy)
         self._attr_assumed_state = assumed_state
         self._attr_device_class = device_class
         self._attr_translation_key = translation_key
@@ -65,6 +65,7 @@ class EltermBoilerNumber(EltermEntity, NumberEntity):
         self._attr_native_unit_of_measurement = unit_of_measurement
         self._attr_native_value = state
         self._attr_unique_id = unique_id
+        self._attr_has_entity_name = True
 
         if native_min_value is not None:
             self._attr_native_min_value = native_min_value
@@ -73,6 +74,11 @@ class EltermBoilerNumber(EltermEntity, NumberEntity):
         if native_step is not None:
             self._attr_native_step = native_step
 
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        super()._handle_coordinator_update()
+
     async def async_set_native_value(self, value: float) -> None:
+        self.proxy.boiler_temp = str(value * 100)
         self._attr_native_value = value
         self.async_write_ha_state()

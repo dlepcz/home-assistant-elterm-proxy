@@ -3,8 +3,7 @@ from . import EltermProxy, EltermEntity
 from .const import DOMAIN
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 _LOGGER = logging.getLogger(__name__)
@@ -50,10 +49,15 @@ class EltermBoilerPowerSelect(EltermEntity, SelectEntity):
     ) -> None:
         super().__init__(proxy)
         self._attr_unique_id = unique_id
+        self._attr_has_entity_name = True
         self._attr_current_option = current_option
         self._attr_options = options
         self._attr_translation_key = translation_key
         
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        super()._handle_coordinator_update()
+
     async def async_select_option(self, option: str) -> None:
         if option == "33%":
             self.proxy.boiler_power = 0
