@@ -34,9 +34,9 @@ async def async_setup_entry(
 
 class EltermBoilerPowerSelect(EltermEntity, SelectEntity):
 
-    _attr_has_entity_name = True
-    _attr_name = None
-    _attr_should_poll = False
+    #_attr_has_entity_name = True
+    #_attr_name = None
+    #_attr_should_poll = False
 
     def __init__(
         self,
