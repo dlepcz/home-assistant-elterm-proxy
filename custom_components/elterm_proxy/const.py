@@ -21,7 +21,7 @@ DEFAULT_DEV_PIN = "XXXX"
 SIGNAL_UPDATE = f"{DOMAIN}_update"
 UPDATE_INTERVAL=30
 ATTR_MANUFACTURER = "Elterm"
-ELTERM_DATA = {
+ELTERM_DATA: dict =  {
     "DevId" : "DevId",
     "DevPin" : "DevPin",
     "Token" : "Token",
@@ -94,7 +94,7 @@ ELTERM_CONTROL_POWER = {
 ELTERM_CONTROL_POWER_MODE = {
     0: "33",
     1: "67",
-    2: "100"
+    2: "100",
 }
 
 ELTERM_SENSORS: list[SensorEntityDescription] = []
