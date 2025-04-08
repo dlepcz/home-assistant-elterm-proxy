@@ -21,7 +21,7 @@ DEFAULT_DEV_PIN = "XXXX"
 SIGNAL_UPDATE = f"{DOMAIN}_update"
 UPDATE_INTERVAL=30
 ATTR_MANUFACTURER = "Elterm"
-ELTERM_DATA: dict =  {
+ELTERM_DATA: dict[str, str] =  {
     "DevId" : "DevId",
     "DevPin" : "DevPin",
     "Token" : "Token",
@@ -103,7 +103,7 @@ for key, value in ELTERM_DATA.items():
     if "Temp" in key:
         ELTERM_SENSORS.append(
             SensorEntityDescription(
-                key=key.lower,
+                key=key.lower(),
                 name=value,
                 device_class=SensorDeviceClass.TEMPERATURE,
                 native_unit_of_measurement=UnitOfTemperature.CELSIUS,
@@ -113,7 +113,7 @@ for key, value in ELTERM_DATA.items():
     elif "BuModulMax" in key:
         ELTERM_SENSORS.append(
             SensorEntityDescription(
-                key=key.lower,
+                key=key.lower(),
                 name=value,
                 device_class=SensorDeviceClass.POWER_FACTOR,
                 native_unit_of_measurement=PERCENTAGE,
@@ -129,14 +129,14 @@ for key, value in ELTERM_DATA.items():
             )
         )
     
-ELTERM_CONTROL_SELECT: list[SelectEntityDescription]
+ELTERM_CONTROL_SELECT: list[SelectEntityDescription] = []
 
 for key, value in ELTERM_CONTROL_POWER.items():
     ELTERM_CONTROL_SELECT.append(
         SelectEntityDescription(
-            key=key.lower,
+            key=key.lower(),
             name=value,
-            options_dict=ELTERM_CONTROL_POWER_MODE,
+            options=list(ELTERM_CONTROL_POWER_MODE.values()),
         )
     )
 
@@ -145,9 +145,10 @@ ELTERM_CONTROL_TEMPERATURE: list[NumberEntityDescription] = []
 for key, value in ELTERM_CONTROL_TEMP.items():
     ELTERM_CONTROL_TEMPERATURE.append(
         NumberEntityDescription(
-            key=key.lower,
+            key=key.lower(),
             name=value,
-            attrs={"min": 20, "max": 70},
+            native_min_value=20,
+            native_max_value=70,
             native_unit_of_measurement=UnitOfTemperature.CELSIUS,
             device_class=NumberDeviceClass.TEMPERATURE
         )
