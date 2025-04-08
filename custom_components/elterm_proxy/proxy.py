@@ -148,7 +148,7 @@ class ProxyConnection(asyncio.Protocol):
                 self.response_buffer = ""
                 parsed = json.loads(match.group(0))
           
-                for k, v in ELTERM_DATA.items:
+                for k, v in ELTERM_DATA.items():
                     self.proxy.elterm_data[k] = parsed.get(k)
 
                 if self.proxy.boilerTempCmd != self.boiler_temp or self.proxy.bBuModulMax != self.boiler_power:

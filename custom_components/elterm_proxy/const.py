@@ -99,7 +99,7 @@ ELTERM_CONTROL_POWER_MODE = {
 
 ELTERM_SENSORS: list[SensorEntityDescription] = []
 
-for key, value in ELTERM_DATA.items:
+for key, value in ELTERM_DATA.items():
     if "Temp" in key:
         ELTERM_SENSORS.append(
             SensorEntityDescription(
@@ -131,7 +131,7 @@ for key, value in ELTERM_DATA.items:
     
 ELTERM_CONTROL_SELECT: list[SelectEntityDescription]
 
-for key, value in ELTERM_CONTROL_POWER.items:
+for key, value in ELTERM_CONTROL_POWER.items():
     ELTERM_CONTROL_SELECT.append(
         SelectEntityDescription(
             key=key.lower,
@@ -142,7 +142,7 @@ for key, value in ELTERM_CONTROL_POWER.items:
 
 ELTERM_CONTROL_TEMPERATURE: list[NumberEntityDescription] = []
 
-for key, value in ELTERM_CONTROL_TEMP.items:
+for key, value in ELTERM_CONTROL_TEMP.items():
     ELTERM_CONTROL_TEMPERATURE.append(
         NumberEntityDescription(
             key=key.lower,
