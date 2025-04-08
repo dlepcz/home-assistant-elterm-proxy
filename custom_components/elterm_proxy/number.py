@@ -32,7 +32,7 @@ class EltermBoilerNumber(EltermEntity, NumberEntity):
         super().__init__(proxy)
         self.entity_description = description
         self._attr_has_entity_name = True
-        self._attr_unique_id = f"{self.hub.name}_{description.key}"
+        self._attr_unique_id = f"{self.proxy.name}_{description.key}"
         self._register = description.register
         self._attr_native_min_value = description.attrs["min"]
         self._attr_native_max_value = description.attrs["max"]

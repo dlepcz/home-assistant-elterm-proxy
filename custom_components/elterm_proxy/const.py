@@ -136,7 +136,7 @@ for key, value in ELTERM_CONTROL_POWER.items():
         SelectEntityDescription(
             key=key.lower(),
             name=value,
-            options=list(ELTERM_CONTROL_POWER_MODE.values()),
+            options_dict=ELTERM_CONTROL_POWER_MODE,
         )
     )
 
