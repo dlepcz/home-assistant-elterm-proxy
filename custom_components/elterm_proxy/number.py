@@ -1,3 +1,4 @@
+import logging
 from __future__ import annotations
 from . import EltermProxy, EltermEntity
 from homeassistant.components.number import NumberDeviceClass, NumberEntity, NumberMode
@@ -13,6 +14,8 @@ from .const import (
     EltermNumberDescription,
 )
 
+
+_LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -43,5 +46,6 @@ class EltermBoilerNumber(EltermEntity, NumberEntity):
     
     async def async_set_native_value(self, value: float) -> None:
         self.proxy.boiler_temp = str(value * 100)
+        _LOGGER.debug(f"Update boiler temperature to: {self.proxy.boiler_temp}")
         self._attr_native_value = value
         self.async_write_ha_state()

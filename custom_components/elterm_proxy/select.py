@@ -50,4 +50,5 @@ class EltermBoilerPowerSelect(EltermEntity, SelectEntity):
     async def async_select_option(self, option: str) -> None:
         new_mode = get_key(self._option_dict, option)
         self.proxy.boiler_power = new_mode
+        _LOGGER.debug(f"Update boiler power to {self.proxy.boiler_power}")
         self.async_write_ha_state()
