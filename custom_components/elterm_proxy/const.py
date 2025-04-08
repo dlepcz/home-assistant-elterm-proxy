@@ -173,6 +173,6 @@ for key, value in ELTERM_CONTROL_TEMP.items():
             name=value,
             attrs={"min": 20, "max": 70, "default": 40},
             native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-            device_class=NumberDeviceClass.TEMPERATURE
+            device_class=NumberDeviceClass.TEMPERATURE,
         )
     )
