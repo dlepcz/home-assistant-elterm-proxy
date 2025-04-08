@@ -7,7 +7,11 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.number import NumberEntityDescription
 
-from .const import DOMAIN, ELTERM_CONTROL_TEMPERATURE
+from .const import (
+    DOMAIN, 
+    ELTERM_CONTROL_TEMPERATURE,
+    EltermNumberDescription,
+)
 
 
 async def async_setup_entry(
@@ -26,7 +30,7 @@ async def async_setup_entry(
 
 class EltermBoilerNumber(EltermEntity, NumberEntity):
     def __init__(
-        self, proxy: EltermProxy, description: NumberEntityDescription
+        self, proxy: EltermProxy, description: EltermNumberDescription
     ) -> None:
         """Init."""
         super().__init__(proxy)

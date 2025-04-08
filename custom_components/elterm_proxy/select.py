@@ -1,6 +1,10 @@
 import logging
 from . import EltermProxy, EltermEntity
-from .const import DOMAIN, ELTERM_CONTROL_SELECT
+from .const import (
+    DOMAIN, 
+    ELTERM_CONTROL_SELECT,
+    EltermSelectDescription,
+)
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
@@ -33,7 +37,7 @@ class EltermBoilerPowerSelect(EltermEntity, SelectEntity):
     def __init__(
         self,
         proxy: EltermProxy,
-        description: SelectEntityDescription,
+        description: EltermSelectDescription,
     ) -> None:
         super().__init__(proxy)
         self._attr_has_entity_name = True
@@ -41,7 +45,8 @@ class EltermBoilerPowerSelect(EltermEntity, SelectEntity):
         self._attr_unique_id = f"{self.proxy.name}_{description.key}"
         self._option_dict = description.options_dict
         self._attr_options = list(description.options_dict.values())
-    
+        self._attr_current_option = "1"
+        
     async def async_select_option(self, option: str) -> None:
         new_mode = get_key(self._option_dict, option)
         self.proxy.boiler_power = new_mode
