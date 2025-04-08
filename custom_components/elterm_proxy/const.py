@@ -10,6 +10,7 @@ from homeassistant.const import (
 )
 from homeassistant.components.select import SelectEntityDescription
 from homeassistant.components.number import NumberEntityDescription, NumberDeviceClass
+from dataclasses import dataclass
 
 DOMAIN = "elterm_proxy"
 DEFAULT_NAME = "elterm"
@@ -128,12 +129,18 @@ for key, value in ELTERM_DATA.items():
                 state_class=SensorStateClass.MEASUREMENT,
             )
         )
-    
-ELTERM_CONTROL_SELECT: list[SelectEntityDescription] = []
+
+
+
+@dataclass
+class EltermSelectDescription(SelectEntityDescription):
+    options_dict: dict[int, str]
+
+ELTERM_CONTROL_SELECT: list[EltermSelectDescription] = []
 
 for key, value in ELTERM_CONTROL_POWER.items():
     ELTERM_CONTROL_SELECT.append(
-        SelectEntityDescription(
+        EltermSelectDescription(
             key=key.lower(),
             name=value,
             options_dict=ELTERM_CONTROL_POWER_MODE,
