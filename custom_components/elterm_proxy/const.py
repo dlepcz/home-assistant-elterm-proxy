@@ -147,8 +147,7 @@ for key, value in ELTERM_CONTROL_TEMP.items():
         NumberEntityDescription(
             key=key.lower(),
             name=value,
-            native_min_value=20,
-            native_max_value=70,
+            attrs={"min": 20, "max": 70},
             native_unit_of_measurement=UnitOfTemperature.CELSIUS,
             device_class=NumberDeviceClass.TEMPERATURE
         )
