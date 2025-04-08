@@ -84,6 +84,17 @@ ELTERM_DATA: dict[str, str] =  {
     "DevType" : "DevType",
 }
 
+@dataclass
+class EltermSelectDescriptionMixin:
+    options_dict: dict[int, str]
+
+
+@dataclass
+class EltermSelectDescription(
+    SelectEntityDescription, EltermSelectDescriptionMixin
+):
+    """Class to describe an elterm select entity."""
+    
 ELTERM_CONTROL_TEMP = {
     "setBoilerTempCmd" : "Temperature",
 }
@@ -131,10 +142,6 @@ for key, value in ELTERM_DATA.items():
         )
 
 
-
-@dataclass
-class EltermSelectDescription(SelectEntityDescription):
-    options_dict: dict[int, str]
 
 ELTERM_CONTROL_SELECT: list[EltermSelectDescription] = []
 
