@@ -94,6 +94,17 @@ class EltermSelectDescription(
     SelectEntityDescription, EltermSelectDescriptionMixin
 ):
     """Class to describe an elterm select entity."""
+
+@dataclass
+class EltermNumberDescriptionMixin:
+    attrs: dict
+
+
+@dataclass
+class EltermNumberDescription(
+    NumberEntityDescription, EltermNumberDescriptionMixin
+):
+    """Class to describe an elterm select entity."""
     
 ELTERM_CONTROL_TEMP = {
     "setBoilerTempCmd" : "Temperature",
@@ -141,8 +152,6 @@ for key, value in ELTERM_DATA.items():
             )
         )
 
-
-
 ELTERM_CONTROL_SELECT: list[EltermSelectDescription] = []
 
 for key, value in ELTERM_CONTROL_POWER.items():
@@ -154,11 +163,11 @@ for key, value in ELTERM_CONTROL_POWER.items():
         )
     )
 
-ELTERM_CONTROL_TEMPERATURE: list[NumberEntityDescription] = []
+ELTERM_CONTROL_TEMPERATURE: list[EltermNumberDescription] = []
 
 for key, value in ELTERM_CONTROL_TEMP.items():
     ELTERM_CONTROL_TEMPERATURE.append(
-        NumberEntityDescription(
+        EltermNumberDescription(
             key=key.lower(),
             name=value,
             attrs={"min": 20, "max": 70},
