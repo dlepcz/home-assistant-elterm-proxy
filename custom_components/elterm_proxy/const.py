@@ -115,9 +115,9 @@ ELTERM_CONTROL_POWER = {
 }
 
 ELTERM_CONTROL_POWER_MODE = {
-    0: "33",
-    1: "67",
-    2: "100",
+    0: "33%",
+    1: "67%",
+    2: "100%",
 }
 
 ELTERM_SENSORS: list[SensorEntityDescription] = []
@@ -160,7 +160,6 @@ for key, value in ELTERM_CONTROL_POWER.items():
             key=key.lower(),
             name=value,
             options_dict=ELTERM_CONTROL_POWER_MODE,
-            native_unit_of_measurement=PERCENTAGE,
         )
     )
 
