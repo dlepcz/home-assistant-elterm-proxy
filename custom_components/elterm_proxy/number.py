@@ -36,6 +36,7 @@ class EltermBoilerNumber(EltermEntity, NumberEntity):
         self._register = description.register
         self._attr_native_min_value = description.attrs["min"]
         self._attr_native_max_value = description.attrs["max"]
+        self._attr_native_value = description.attrs["default"]
 
     @property
     def current_option(self) -> str:
