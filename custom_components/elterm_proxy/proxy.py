@@ -66,7 +66,7 @@ class EltermProxy(DataUpdateCoordinator):
     async def _async_update_data(self) -> dict:
         _LOGGER("Update seosors")
         try:
-            self.elterm_data["DevType"]="test"
+            self.elterm_data["DevType"]="test1"
             return self.elterm_data
         except Exception as err:
             raise UpdateFailed(f"Error get data: {err}")
