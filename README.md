@@ -1,64 +1,91 @@
-# Elterm TCP Proxy for Home Assistant
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 
-This custom integration creates a full TCP proxy between a local client and a remote Elterm boiler controller.
+# 🏭 Elterm TCP Proxy for Home Assistant
 
-It allows Home Assistant to:
-- Forward data bidirectionally over TCP,
-- Dynamically read and modify boiler commands (`BoilerTempCmd`, `BoilerPowerCmd`),
-- Inject updated values based on Home Assistant sensors,
-- Expose proxy data as HA sensors (`boiler_temp`, `boiler_power`).
+**Elterm Proxy** is a fully-featured Home Assistant integration that acts as a full-duplex TCP proxy between a Elterm electric boiler and Elterm server. Integration captures TCP data and create entities for Home Assistant and allow control boiler parameters.
 
----
-
-## 🔧 Features
-
-- Full duplex TCP proxy
-- JSON analysis and injection (including Token)
-- Command control via Home Assistant
-- Dynamic sensors for current temp and power
-- Configurable via Home Assistant UI
+The integration enables:
+- Real-time data interception and analysis (e.g., temperature, mode, token).
+- Sending control commands to the boiler (e.g., target temperature, mode).
+- Dynamic creation of `sensor` entities.
+- Control `number` and `select` entities.
+- Configuration via Home Assistant UI (config flow).
+- Full support of the Elterm data model (`BoilerTempAct`, `CH1Mode`, `Token`, `BuModulMax`, etc.).
 
 ---
 
-## 🧰 Configuration
+## ⚙️ Features
 
-### Through UI
-1. Go to `Settings > Devices & Services`
-2. Click `+ Add Integration` > search for **Elterm Proxy**
-3. Fill in required fields:
-   - Listen port
-   - Forward host and port
-   - Device ID and PIN
+- 🔌 **Full TCP Proxy**: relays traffic between client and Elterm device.
+- 🔁 **JSON Analysis & Injection**: parses and modifies traffic live.
+- 🧠 **Dynamic Entity Creation**:
+  - `sensor.elterm_*`
+  - `number.elterm_temperature` – set boiler temperature
+  - `select.elterm_power` – set power output (33%, 67%, 100%)
+- 📡 **Automatic token detection and forwarding**
+- 🧰 **Configurable via UI or YAML**
 
 ---
 
-## 📡 Controlling Boiler Setpoints
+## 🧰 Requirements
 
-Add the following to your `configuration.yaml` or split files:
+- Home Assistant 2023.12 or newer
+- Python 3.11+
+- Elterm boiler with TCP communication support
+- Access to device IP and port
 
-```yaml
-input_number:
-  boiler_temp_cmd:
-    name: Boiler Temperature Setpoint
-    min: 30
-    max: 90
-    step: 0.5
-    unit_of_measurement: "°C"
+---
 
-  boiler_power_cmd:
-    name: Boiler Power Setpoint
-    min: 0
-    max: 100
-    step: 1
-    unit_of_measurement: "%"
+## 🔧 Installation
 
-sensor:
-  - platform: template
-    sensors:
-      boiler_temp_cmd:
-        value_template: "{{ states('input_number.boiler_temp_cmd') | int }}"
-        unit_of_measurement: "°C"
+### 1. Using HACS (recommended)
+1. Open HACS > Integrations > Add Custom Repository
+2. Enter the repo URL: https://github.com/dlepcz/home-assistant-elterm-proxy
+3. Select `Integration` type
+4. Install and restart Home Assistant
 
-      boiler_power_cmd:
-        value_template: "{{ states('input_number.boiler_power_cmd') | int }}"
-        unit_of_measurement: "%"
+### 2. Manual
+Copy the `elterm_proxy` folder to: /config/custom_components/elterm_proxy/
+
+---
+
+## 🚀 Configuration
+
+### Via Home Assistant UI
+1. Go to **Settings > Devices & Services**
+2. Click `+ Add Integration`, search for `Elterm Proxy`
+3. Fill in:
+   - `Listen port` (e.g., 9999)
+   - `Forward host` (e.g., 46.242.129.11)
+   - `Forward port` (e.g., 88)
+   - `DevId` and `DevPin` (as per your boiler setup)
+
+After saving, TCP proxy will be started and entities created automatically.
+
+---
+
+## 📈 Entities
+
+### 🧪 Sensors
+- `sensor.elterm_boiler_temp` – current boiler temperature
+- `sensor.elterm_boiler_power` – current power level
+- `sensor.elterm_boiler_token` – current session token
+
+### 🎛️ Control entities
+- `number.elterm_temperature` – temperature setpoint (20–70°C)
+- `select.elterm_power` – power mode (33%, 67%, 100%)
+
+---
+Settings > System > Logs
+Look for entries prefixed with: [custom_components.elterm_proxy.proxy]
+
+🙌 Author
+Created by @dlepcz.
+"Elterm" is a trademark of the boiler manufacturer.
+
+
+📃 License
+This project is open-source under the MIT license.
+Use at your own risk. Test it thoroughly before using in production with real heating hardware.
+
+
