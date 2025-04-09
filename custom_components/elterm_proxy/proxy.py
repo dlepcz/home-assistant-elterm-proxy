@@ -65,7 +65,6 @@ class EltermProxy(DataUpdateCoordinator):
         
     async def _async_update_data(self) -> dict:
         try:
-            self.elterm_data["DevType"]="test1"
             return self.elterm_data
         except Exception as err:
             raise UpdateFailed(f"Error get data: {err}")

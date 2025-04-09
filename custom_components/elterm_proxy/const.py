@@ -23,16 +23,16 @@ SIGNAL_UPDATE = f"{DOMAIN}_update"
 UPDATE_INTERVAL=30
 ATTR_MANUFACTURER = "Elterm"
 ELTERM_DATA: dict[str, str] =  {
-    "DevId" : "DevId",
-    "DevPin" : "DevPin",
+    "DevId" : "Identifier",
+    "DevPin" : "PIN",
     "Token" : "Token",
-    "FrameType" : "FrameType",
-    "TimeStamp" : "TimeStamp",
-    "DevStatus" : "DevStatus",
+    "FrameType" : "Frame type",
+    "TimeStamp" : "Timestamp",
+    "DevStatus" : "Status",
     "Alarms" : "Alarms",
-    "BoilerTempAct" : "BoilerTempAct",
-    "BoilerTempCmd" : "BoilerTempCmd",
-    "BoilerHist" : "BoilerHist",
+    "BoilerTempAct" : "Actual temperature",
+    "BoilerTempCmd" : "Set temperature",
+    "BoilerHist" : "Hysteresis central heating",
     "DHWTempAct" : "DHWTempAct",
     "DHWTempCmd" : "DHWTempCmd",
     "DHWOverH" : "DHWOverH",
@@ -46,7 +46,7 @@ ELTERM_DATA: dict[str, str] =  {
     "WeaTempAct" : "WeaTempAct",
     "WeaCorr" : "WeaCorr",
     "UpTime" : "UpTime",
-    "BuModulMax" : "BuModulMax",
+    "BuModulMax" : "Current power",
     "P001" : "P001",
     "P002" : "P002",
     "P003" : "P003",
@@ -81,7 +81,7 @@ ELTERM_DATA: dict[str, str] =  {
     "P034" : "P034",
     "P035" : "P035",
     "P036" : "P036",
-    "DevType" : "DevType",
+    "DevType" : "Type",
 }
 
 @dataclass
