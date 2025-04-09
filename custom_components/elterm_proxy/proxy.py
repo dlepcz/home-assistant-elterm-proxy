@@ -64,7 +64,7 @@ class EltermProxy(DataUpdateCoordinator):
             return default
         
     async def _async_update_data(self) -> dict:
-        _LOGGER("Update seosors")
+        _LOGGER.info("Update seosors")
         try:
             self.elterm_data["DevType"]="test1"
             return self.elterm_data
