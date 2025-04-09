@@ -6,6 +6,7 @@ from . import EltermEntity, EltermProxy
 from homeassistant.components.sensor import (
     SensorEntity,
     SensorEntityDescription,
+    SensorDeviceClass
 )
 from homeassistant.core import HomeAssistant, callback
 
@@ -35,6 +36,20 @@ class EltermProxySensor(EltermEntity, SensorEntity):
     def _handle_coordinator_update(self) -> None:
         new_value = self.proxy.elterm_data.get(self.entity_description.key)
         _LOGGER.debug("Update sensor %s to %s", self.entity_description.key, new_value)
-        self._attr_native_value = new_value
+
+        if self.entity_description.device_class == SensorDeviceClass.TEMPERATURE:
+            self._attr_native_value = int(new_value) / 100
+        elif self.entity_description.key == "BuModulMax":
+            match new_value:
+                case "0":
+                    self._attr_native_value = "33%"
+                case "1":
+                    self._attr_native_value = "67%"
+                case "2":
+                    self._attr_native_value = "100%"
+                case _:
+                    self._attr_native_value = None
+        else:    
+            self._attr_native_value = new_value
 
         super()._handle_coordinator_update()

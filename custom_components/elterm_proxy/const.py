@@ -133,22 +133,11 @@ for key, value in ELTERM_DATA.items():
                 state_class=SensorStateClass.MEASUREMENT,
             )
         )
-    elif "BuModulMax" in key:
-        ELTERM_SENSORS.append(
-            SensorEntityDescription(
-                key=key,
-                name=value,
-                device_class=SensorDeviceClass.POWER_FACTOR,
-                native_unit_of_measurement=PERCENTAGE,
-                state_class=SensorStateClass.MEASUREMENT,
-            )
-        )
     else:
         ELTERM_SENSORS.append(
             SensorEntityDescription(
                 key=key,
                 name=value,
-                state_class=SensorStateClass.MEASUREMENT,
             )
         )
 
