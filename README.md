@@ -79,11 +79,13 @@ After saving, TCP proxy will be started and entities created automatically.
 Settings > System > Logs
 Look for entries prefixed with: [custom_components.elterm_proxy.proxy]
 
+---
 🙌 Author
 Created by @dlepcz.
 "Elterm" is a trademark of the boiler manufacturer.
 
 
+---
 📃 License
 This project is open-source under the MIT license.
 Use at your own risk. Test it thoroughly before using in production with real heating hardware.
