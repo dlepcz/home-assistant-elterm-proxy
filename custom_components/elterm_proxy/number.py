@@ -1,5 +1,4 @@
 import logging
-from __future__ import annotations
 from . import EltermProxy, EltermEntity
 from homeassistant.components.number import NumberDeviceClass, NumberEntity, NumberMode
 from homeassistant.config_entries import ConfigEntry
