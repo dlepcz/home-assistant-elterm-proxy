@@ -126,7 +126,7 @@ for key, value in ELTERM_DATA.items():
     if "Temp" in key:
         ELTERM_SENSORS.append(
             SensorEntityDescription(
-                key=key.lower(),
+                key=key,
                 name=value,
                 device_class=SensorDeviceClass.TEMPERATURE,
                 native_unit_of_measurement=UnitOfTemperature.CELSIUS,
@@ -136,7 +136,7 @@ for key, value in ELTERM_DATA.items():
     elif "BuModulMax" in key:
         ELTERM_SENSORS.append(
             SensorEntityDescription(
-                key=key.lower(),
+                key=key,
                 name=value,
                 device_class=SensorDeviceClass.POWER_FACTOR,
                 native_unit_of_measurement=PERCENTAGE,
@@ -146,7 +146,7 @@ for key, value in ELTERM_DATA.items():
     else:
         ELTERM_SENSORS.append(
             SensorEntityDescription(
-                key=key.lower,
+                key=key,
                 name=value,
                 state_class=SensorStateClass.MEASUREMENT,
             )
@@ -157,7 +157,7 @@ ELTERM_CONTROL_SELECT: list[EltermSelectDescription] = []
 for key, value in ELTERM_CONTROL_POWER.items():
     ELTERM_CONTROL_SELECT.append(
         EltermSelectDescription(
-            key=key.lower(),
+            key=key,
             name=value,
             options_dict=ELTERM_CONTROL_POWER_MODE,
         )
@@ -168,7 +168,7 @@ ELTERM_CONTROL_TEMPERATURE: list[EltermNumberDescription] = []
 for key, value in ELTERM_CONTROL_TEMP.items():
     ELTERM_CONTROL_TEMPERATURE.append(
         EltermNumberDescription(
-            key=key.lower(),
+            key=key,
             name=value,
             attrs={"min": 20, "max": 70, "default": 40},
             native_unit_of_measurement=UnitOfTemperature.CELSIUS,
