@@ -151,7 +151,7 @@ class ProxyConnection(asyncio.Protocol):
                 for k, v in ELTERM_DATA.items():
                     self.proxy.elterm_data[k] = parsed.get(k)
 
-                if self.proxy.elterm_data["boilerTempCmd"] != self.boiler_temp or self.proxy.elterm_data["bBuModulMax"] != self.boiler_power:
+                if self.proxy.elterm_data["BoilerTempCmd"] != self.proxy.boiler_temp or self.proxy.elterm_data["BuModulMax"] != self.proxy.boiler_power:
                     self.send_command()
                     
             except json.JSONDecodeError:
@@ -173,7 +173,7 @@ class ProxyConnection(asyncio.Protocol):
             "Token": self.proxy.elterm_data["ServerToken"],
             "DevId": self.proxy.dev_id,
             "DevPin": self.proxy.dev_pin,
-            "BoilerTempCmd": self.boiler_temp or 6500,
+            "BoilerTempCmd": self.proxy.boiler_temp or 6500,
             "BoilerHist": self.proxy.elterm_data["BoilerHist"] or 200,
             "CH1Mode": "Still_On",
             "BuModulMax": self.proxy.boiler_power or 1
