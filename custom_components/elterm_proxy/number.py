@@ -41,6 +41,7 @@ class EltermBoilerNumber(EltermEntity, NumberEntity):
         self._attr_native_min_value = description.attrs["min"]
         self._attr_native_max_value = description.attrs["max"]
         self._attr_native_value = description.attrs["default"]
+        self._attr_native_step = description.attrs["step"]
     
     async def async_set_native_value(self, value: float) -> None:
         self.proxy.boiler_temp = str(int(float(value) * 100))

@@ -1,7 +1,7 @@
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntityDescription,
-    SensorStateClass,
+    SensorStateClass
 )
 
 from homeassistant.const import (
@@ -9,7 +9,7 @@ from homeassistant.const import (
     UnitOfTemperature,
 )
 from homeassistant.components.select import SelectEntityDescription
-from homeassistant.components.number import NumberEntityDescription, NumberDeviceClass
+from homeassistant.components.number import NumberEntityDescription, NumberDeviceClass, NumberMode
 from dataclasses import dataclass
 
 DOMAIN = "elterm_proxy"
@@ -160,8 +160,9 @@ for key, value in ELTERM_CONTROL_TEMP.items():
         EltermNumberDescription(
             key=key,
             name=value,
-            attrs={"min": 20, "max": 70, "default": 40},
+            attrs={"min": 20, "max": 70, "default": 65, "step": 1},
             native_unit_of_measurement=UnitOfTemperature.CELSIUS,
             device_class=NumberDeviceClass.TEMPERATURE,
+            mode=NumberMode.BOX,
         )
     )

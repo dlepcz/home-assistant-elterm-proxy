@@ -55,7 +55,7 @@ class EltermBoilerPowerSelect(EltermEntity, SelectEntity):
     
     @property
     def current_option(self) -> str:
-        return get_value(self.proxy.boiler_power)
+        return get_value(self._option_dict, self.proxy.boiler_power)
 
     @callback
     def _handle_coordinator_update(self) -> None:
