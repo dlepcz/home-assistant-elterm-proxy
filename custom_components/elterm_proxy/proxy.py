@@ -34,8 +34,8 @@ class EltermProxy(DataUpdateCoordinator):
         self._config = config
         self._server = None
         self._tasks = []
-        self.boiler_temp = 6500
-        self.boiler_power = 1
+        self.boiler_temp = "6500"
+        self.boiler_power = "1"
         self.name = config.get(CONF_NAME)
         self.dev_id = config.get("dev_id")
         self.dev_pin = config.get("dev_pin")
@@ -79,6 +79,7 @@ class ProxyConnection(asyncio.Protocol):
         self._remote_connected = asyncio.Event()
         self._forward_loop_task = None
         self.response_buffer = ""
+        self.server_token = None
 
     def connection_made(self, transport):
         self.transport = transport
@@ -126,8 +127,10 @@ class ProxyConnection(asyncio.Protocol):
                 _LOGGER.debug("[S] %s", decoded.strip())
                 try:
                     json_data = json.loads(decoded)
-                    if 'Token' in json_data:
-                        self.proxy.elterm_data["ServerToken"] = json_data['Token']
+                    if 'Token' in json_data and self.server_token != json_data['Token']:
+                        self.server_token = json_data['Token']
+                        _LOGGER.debug("New server token = %s", self.server_token)
+                        self.proxy.elterm_data["ServerToken"] = self.server_token
 
                 except json.JSONDecodeError:
                     _LOGGER.debug("[S] Non-JSON data")
@@ -165,18 +168,19 @@ class ProxyConnection(asyncio.Protocol):
             _LOGGER.warning("Skipping forward: remote not connected")
 
     def send_command(self):
-        if not all([self.proxy.elterm_data["ServerToken"], self.proxy.dev_id, self.proxy.dev_pin]):
+        if not all([self.server_token, self.proxy.dev_id, self.proxy.dev_pin]):
+            _LOGGER.debug("ServerToken=%s;dev_id=%s;;dev_pin=%s", self.server_token,self.proxy.dev_id, self.proxy.dev_pin);
             _LOGGER.warning("Empty ServerToken/DevId/DevPin")
             return
         reply = {
             "FrameType": "DataToSen",
-            "Token": self.proxy.elterm_data["ServerToken"],
+            "Token": self.server_token,
             "DevId": self.proxy.dev_id,
             "DevPin": self.proxy.dev_pin,
-            "BoilerTempCmd": self.proxy.boiler_temp or 6500,
-            "BoilerHist": self.proxy.elterm_data["BoilerHist"] or 200,
+            "BoilerTempCmd": self.proxy.boiler_temp,
+            "BoilerHist": self.proxy.elterm_data["BoilerHist"],
             "CH1Mode": "Still_On",
-            "BuModulMax": self.proxy.boiler_power or 1
+            "BuModulMax": self.proxy.boiler_power
         }
         msg = json.dumps(reply)
         _LOGGER.info("→ Sending to client: %s", msg)

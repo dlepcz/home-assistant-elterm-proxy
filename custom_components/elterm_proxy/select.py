@@ -32,6 +32,12 @@ def get_key(my_dict, search):
             return key
     return None
 
+def get_value(my_dict, search):
+    for key, value in my_dict.items():
+        if key == search:
+            return value
+    return None
+
 class EltermBoilerPowerSelect(EltermEntity, SelectEntity):
 
     def __init__(
@@ -46,6 +52,14 @@ class EltermBoilerPowerSelect(EltermEntity, SelectEntity):
         self._option_dict = description.options_dict
         self._attr_options = list(description.options_dict.values())
         self._attr_current_option = "67%"
+    
+    @property
+    def current_option(self) -> str:
+        return get_value(self.proxy.boiler_power)
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        super()._handle_coordinator_update()
 
     async def async_select_option(self, option: str) -> None:
         new_mode = get_key(self._option_dict, option)

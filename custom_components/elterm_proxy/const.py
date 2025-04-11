@@ -26,6 +26,7 @@ ELTERM_DATA: dict[str, str] =  {
     "DevId" : "Identifier",
     "DevPin" : "PIN",
     "Token" : "Token",
+    "ServerToken" : "Server token",
     "FrameType" : "Frame type",
     "TimeStamp" : "Timestamp",
     "DevStatus" : "Status",
@@ -115,9 +116,9 @@ ELTERM_CONTROL_POWER = {
 }
 
 ELTERM_CONTROL_POWER_MODE = {
-    0: "33%",
-    1: "67%",
-    2: "100%",
+    "0": "33%",
+    "1": "67%",
+    "2": "100%",
 }
 
 ELTERM_SENSORS: list[SensorEntityDescription] = []

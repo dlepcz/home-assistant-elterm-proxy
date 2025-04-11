@@ -43,7 +43,7 @@ class EltermBoilerNumber(EltermEntity, NumberEntity):
         self._attr_native_value = description.attrs["default"]
     
     async def async_set_native_value(self, value: float) -> None:
-        self.proxy.boiler_temp = str(value * 100)
+        self.proxy.boiler_temp = str(int(float(value) * 100))
         _LOGGER.debug(f"Update boiler temperature to: {self.proxy.boiler_temp}")
         self._attr_native_value = value
         self.async_write_ha_state()
