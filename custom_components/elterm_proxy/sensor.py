@@ -1,7 +1,7 @@
 import logging
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-from .const import DOMAIN, ELTERM_SENSORS
+from .const import DOMAIN, ELTERM_SENSORS, ELTERM_ADD_SENSROS
 from . import EltermEntity, EltermProxy
 from homeassistant.components.sensor import (
     SensorEntity,
@@ -37,22 +37,36 @@ class EltermProxySensor(EltermEntity, SensorEntity):
         new_value = self.proxy.elterm_data.get(self.entity_description.key)
         _LOGGER.debug("Update sensor %s to %s", self.entity_description.key, new_value)
 
-        if new_value != None:
-            if self.entity_description.device_class == SensorDeviceClass.TEMPERATURE:
-                self._attr_native_value = int(new_value) / 100
-            elif self.entity_description.key == "BuModulMax":
-                match new_value:
-                    case "0":
-                        self._attr_native_value = "33%"
-                    case "1":
-                        self._attr_native_value = "67%"
-                    case "2":
-                        self._attr_native_value = "100%"
-                    case _:
-                        self._attr_native_value = None
-            else:
-                self._attr_native_value = new_value    
+        if self.entity_description.key[0].islower():
+            match self.entity_description.key:
+                case "serverToken":
+                    return new_value
+                case "boilerStatus":
+                    new_value = self.proxy.elterm_data.get("DevStatus")
+                    if new_value != None:
+                        if new_value[:3] == "PRA":
+                            return "Praca"
+                        else:
+                            return "Stop"
+                    else:
+                        return new_value
         else:
-            self._attr_native_value = new_value
+            if new_value != None:
+                if self.entity_description.device_class == SensorDeviceClass.TEMPERATURE:
+                    self._attr_native_value = int(new_value) / 100
+                elif self.entity_description.key == "BuModulMax":
+                    match new_value:
+                        case "0":
+                            self._attr_native_value = "33%"
+                        case "1":
+                            self._attr_native_value = "67%"
+                        case "2":
+                            self._attr_native_value = "100%"
+                        case _:
+                            self._attr_native_value = None
+                else:
+                    self._attr_native_value = new_value    
+            else:
+                self._attr_native_value = new_value
 
         super()._handle_coordinator_update()

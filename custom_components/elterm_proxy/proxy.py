@@ -130,7 +130,7 @@ class ProxyConnection(asyncio.Protocol):
                     if 'Token' in json_data and self.server_token != json_data['Token']:
                         self.server_token = json_data['Token']
                         _LOGGER.debug("New server token = %s", self.server_token)
-                        self.proxy.elterm_data["ServerToken"] = self.server_token
+                        self.proxy.elterm_data["serverToken"] = self.server_token
 
                 except json.JSONDecodeError:
                     _LOGGER.debug("[S] Non-JSON data")
@@ -152,7 +152,8 @@ class ProxyConnection(asyncio.Protocol):
                 parsed = json.loads(match.group(0))
           
                 for k, v in ELTERM_DATA.items():
-                    self.proxy.elterm_data[k] = parsed.get(k)
+                    if k[0].isupper():
+                        self.proxy.elterm_data[k] = parsed.get(k)
 
                 if self.proxy.elterm_data["BoilerTempCmd"] != self.proxy.boiler_temp or self.proxy.elterm_data["BuModulMax"] != self.proxy.boiler_power:
                     self.send_command()

@@ -1,6 +1,7 @@
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntityDescription,
+    BinarySensorEntityDescription,
     SensorStateClass
 )
 
@@ -26,7 +27,6 @@ ELTERM_DATA: dict[str, str] =  {
     "DevId" : "Identifier",
     "DevPin" : "PIN",
     "Token" : "Token",
-    "ServerToken" : "Server token",
     "FrameType" : "Frame type",
     "TimeStamp" : "Timestamp",
     "DevStatus" : "Status",
@@ -47,7 +47,7 @@ ELTERM_DATA: dict[str, str] =  {
     "WeaTempAct" : "WeaTempAct",
     "WeaCorr" : "WeaCorr",
     "UpTime" : "UpTime",
-    "BuModulMax" : "Current power",
+    "BuModulMax" : "Set power",
     "P001" : "P001",
     "P002" : "P002",
     "P003" : "P003",
@@ -83,6 +83,8 @@ ELTERM_DATA: dict[str, str] =  {
     "P035" : "P035",
     "P036" : "P036",
     "DevType" : "Type",
+    "boilerStatus" : "Boiler status",
+    "serverToken" : "Server token",
 }
 
 @dataclass
@@ -121,6 +123,11 @@ ELTERM_CONTROL_POWER_MODE = {
     "2": "100%",
 }
 
+
+ELTERM_BINARY = {
+    "pumpStatus" : "Pump status",
+}
+
 ELTERM_SENSORS: list[SensorEntityDescription] = []
 
 for key, value in ELTERM_DATA.items():
@@ -141,6 +148,16 @@ for key, value in ELTERM_DATA.items():
                 name=value,
             )
         )
+
+ELTERM_BINARY_SENSORS: list[BinarySensorEntityDescription] = []
+
+for key, value in ELTERM_BINARY.items():
+    ELTERM_BINARY_SENSORS.append(
+        BinarySensorEntityDescription(
+                key=key,
+                name=value,
+            )
+    )
 
 ELTERM_CONTROL_SELECT: list[EltermSelectDescription] = []
 
