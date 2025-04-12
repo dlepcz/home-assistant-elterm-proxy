@@ -1,7 +1,7 @@
 import logging
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-from .const import DOMAIN, ELTERM_SENSORS, ELTERM_ADD_SENSROS
+from .const import DOMAIN, ELTERM_SENSORS
 from . import EltermEntity, EltermProxy
 from homeassistant.components.sensor import (
     SensorEntity,
@@ -40,16 +40,14 @@ class EltermProxySensor(EltermEntity, SensorEntity):
         if self.entity_description.key[0].islower():
             match self.entity_description.key:
                 case "serverToken":
-                    return new_value
+                    self._attr_native_value = new_value
                 case "boilerStatus":
                     new_value = self.proxy.elterm_data.get("DevStatus")
                     if new_value != None:
                         if new_value[:3] == "PRA":
-                            return "Praca"
+                            self._attr_native_value = "Praca"
                         else:
-                            return "Stop"
-                    else:
-                        return new_value
+                            self._attr_native_value = "Stop"
         else:
             if new_value != None:
                 if self.entity_description.device_class == SensorDeviceClass.TEMPERATURE:

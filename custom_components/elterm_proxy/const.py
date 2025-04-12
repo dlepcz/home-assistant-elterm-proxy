@@ -5,6 +5,10 @@ from homeassistant.components.sensor import (
     SensorStateClass
 )
 
+from homeassistant.components.binary_sensor import (
+    BinarySensorEntityDescription,
+)
+
 from homeassistant.const import (
     PERCENTAGE,
     UnitOfTemperature,
@@ -123,9 +127,8 @@ ELTERM_CONTROL_POWER_MODE = {
     "2": "100%",
 }
 
-
 ELTERM_BINARY = {
-    "pumpStatus" : "Pump status",
+    "pumpIsRunning" : "Pump is running",
 }
 
 ELTERM_SENSORS: list[SensorEntityDescription] = []
