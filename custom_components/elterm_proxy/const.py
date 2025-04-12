@@ -6,6 +6,7 @@ from homeassistant.components.sensor import (
 
 from homeassistant.components.binary_sensor import (
     BinarySensorEntityDescription,
+    BinarySensorDeviceClass,
 )
 
 from homeassistant.const import (
@@ -88,6 +89,7 @@ ELTERM_DATA: dict[str, str] =  {
     "DevType" : "Type",
     "boilerStatus" : "Boiler status",
     "serverToken" : "Server token",
+    "currentPower": "Current power"
 }
 
 @dataclass
@@ -158,6 +160,7 @@ for key, value in ELTERM_BINARY.items():
         BinarySensorEntityDescription(
                 key=key,
                 name=value,
+                device_class=BinarySensorDeviceClass.RUNNING,
             )
     )
 

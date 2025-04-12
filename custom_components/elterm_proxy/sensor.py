@@ -48,6 +48,10 @@ class EltermProxySensor(EltermEntity, SensorEntity):
                             self._attr_native_value = "Praca"
                         else:
                             self._attr_native_value = "Stop"
+                case "currentPower":
+                    new_value = self.proxy.elterm_data.get("DevStatus")
+                    if new_value != None:
+                        self._attr_native_value = f"{int(new_value[3:6])}%"
         else:
             if new_value != None:
                 if self.entity_description.device_class == SensorDeviceClass.TEMPERATURE:

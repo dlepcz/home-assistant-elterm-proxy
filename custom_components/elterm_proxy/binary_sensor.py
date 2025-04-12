@@ -30,11 +30,11 @@ class EltermProxyBinarySensor(EltermEntity, BinarySensorEntity):
         self._attr_has_entity_name = True
         self._attr_unique_id = f"{self.proxy.name}_{description.key}"
 
-    
-    @property
-    def is_on(self) -> bool:
-        if self.entity_description.key == "pumpStatus":
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        if self.entity_description.key == "pumpIsRunning":
             new_value = self.proxy.elterm_data.get("DevStatus")
             if new_value != None:
-                return int(new_value[10:11]) > 0
-        return False
+                self._attr_is_on = int(new_value[10:11]) > 0
+        else:
+            self._attr_is_on = False
