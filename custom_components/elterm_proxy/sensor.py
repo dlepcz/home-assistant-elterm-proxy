@@ -6,7 +6,7 @@ from . import EltermEntity, EltermProxy
 from homeassistant.components.sensor import (
     SensorEntity,
     SensorEntityDescription,
-    SensorDeviceClass
+    SensorDeviceClass,
 )
 from homeassistant.core import HomeAssistant, callback
 

@@ -1,8 +1,7 @@
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntityDescription,
-    BinarySensorEntityDescription,
-    SensorStateClass
+    SensorStateClass,
 )
 
 from homeassistant.components.binary_sensor import (
