@@ -4,7 +4,7 @@ import logging
 from .const import DOMAIN, ELTERM_BINARY_SENSORS
 from . import EltermEntity, EltermProxy
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.components.sensor import (
+from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
     BinarySensorEntityDescription,
 )
