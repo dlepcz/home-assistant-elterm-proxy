@@ -13,7 +13,7 @@ from .proxy import EltermProxy
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = ["number", "select", "sensor"]
+PLATFORMS = ["number", "select", "sensor", "binary_sensor"]
 
 async def async_setup(hass: HomeAssistant, config: dict):
     hass.data[DOMAIN] = {}

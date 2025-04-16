@@ -32,9 +32,12 @@ class EltermProxyBinarySensor(EltermEntity, BinarySensorEntity):
 
     @callback
     def _handle_coordinator_update(self) -> None:
+        _LOGGER.debug("Update binary sensor %s", self.entity_description.key)
         if self.entity_description.key == "pumpIsRunning":
             new_value = self.proxy.elterm_data.get("DevStatus")
+            _LOGGER.debug("Update binary sensor %s to %s", self.entity_description.key, new_value)
             if new_value != None:
                 self._attr_is_on = int(new_value[10:11]) > 0
         else:
             self._attr_is_on = False
+        super()._handle_coordinator_update()
